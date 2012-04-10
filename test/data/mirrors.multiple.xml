@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Mirrors>
+  <Mirror>
+    <id>1</id>
+    <mirrorpath>xmlonly</mirrorpath>
+    <typemask>1</typemask>
+  </Mirror>
+  <Mirror>
+    <id>2</id>
+    <mirrorpath>bannersonly</mirrorpath>
+    <typemask>2</typemask>
+  </Mirror>
+  <Mirror>
+    <id>3</id>
+    <mirrorpath>ziponly</mirrorpath>
+    <typemask>4</typemask>
+  </Mirror>
+  <Mirror>
+    <id>4</id>
+    <mirrorpath>everything</mirrorpath>
+    <typemask>7</typemask>
+  </Mirror>
+  <Mirror>
+    <id>5</id>
+    <mirrorpath>xmlandbanners</mirrorpath>
+    <typemask>3</typemask>
+  </Mirror>
+  <Mirror>
+    <id>6</id>
+    <mirrorpath>xmlandzip</mirrorpath>
+    <typemask>5</typemask>
+  </Mirror>
+  <Mirror>
+    <id>7</id>
+    <mirrorpath>bannersandzip</mirrorpath>
+    <typemask>6</typemask>
+  </Mirror>
+</Mirrors>
