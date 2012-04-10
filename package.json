@@ -2,7 +2,7 @@
   "author": "Matias Meno <m@tias.me>",
   "name": "thetvdb",
   "description": "A library to communicate with thetvdb.com",
-  "version": "0.0.1",
+  "version": "0.0.2-dev",
   "website": "https://github.com/enyo/node-thetvdb",
   "repository": {
     "type": "git",
