@@ -78,3 +78,20 @@ Mirrors is an Array containing objects that are formatted like this:
     };
 
 Time is an integer.
+
+### Get a list of series by name
+
+	tvdb.getSeriesByName(['My', 'Favorite', 'Sitcom'], function(err, allSeries) {
+		// err is set when either th ehttp call to thetvdb didn't work, the
+		// XML couldn't be parsed, or the list of keywords to search for was
+		// not set.
+		if (err) return;
+		
+		// Handle list of matching series
+	});
+
+Series is an Array containing objects that are formatted like this:
+
+	{ id: "987654321", name: 'My Favorite Sitcom', language: 'en', banner: 'path/to/banner.jpg', overview: 'My Favorite Sitcom stars Bla McBlaberson in dual roles as both a high-strung criminal lawyer, and his lazy twin brother.', firstAired: '2009-09-09', imdbId: 't1234567', zap2itId: 'S666' }
+	
+Not all fields are set for all series. This depends on how much information about the series has been contributed to The TVDB.
