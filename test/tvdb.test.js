@@ -126,6 +126,73 @@ describe("tvdb", function() {
       });
     });
   });
+  
+  describe("getSeriesByName()", function() {
+	  it("should call the callback with error due to null keywords argument", function(done) {
+		  tvdbWithError.getSeriesByName(null, function(err, mirrors) {
+			  err.should.be.instanceof(Error);
+			  done();
+		  });
+	  });
+	  it("should call the callback with error due to empty keywords array", function(done) {
+		  tvdbWithError.getSeriesByName([], function(err, mirrors) {
+			  err.should.be.instanceof(Error);
+			  done();
+		  });
+	  });
+	  it("should return a valid list if only one series", function(done) {
+		  xmlUri = __dirname + "/data/seriesByName.single.xml";
+		  tvdb.getSeriesByName(["30","Rock"], function(err, series) {
+			  series.should.eql([{
+				   id: '79488',
+				   language: 'en',
+				   name: '30 Rock',
+				   banner: 'graphical/79488-g11.jpg',
+				   overview: "Emmy Award Winner Tina Fey writes, executive produces and stars as Liz Lemon, the head writer of a live variety programme in New York City. Liz's life is turned upside down when brash new network executive Jack Donaghy (Alec Baldwin in his Golden Globe winning role) interferes with her show, bringing the wildly unpredictable Tracy Jordan (Tracy Morgan) into the cast. Now its up to Liz to manage the mayhem and still try to have a life.",
+				   firstAired: '2006-10-11',
+				   imdbId: 'tt0496424',
+				   zap2itId: 'SH00848357'
+			   }]);
+			   done();
+		   });
+	   });
+ 	  it("should return a valid list of multiple series", function(done) {
+ 		  xmlUri = __dirname + "/data/seriesByName.multiple.xml";
+ 		  tvdb.getSeriesByName(["30"], function(err, allSeries) {
+	          allSeries.length.should.equal(3);
+	          var ids = [];
+	          _.each(allSeries, function(series) {
+	            ids.push(series.id);
+	            switch(series.id) {
+	              case "255912":
+	                series.language.should.equal("en");
+	                series.name.should.eql("30 Grader i Februari");
+					series.banner.should.equal("graphical/255912-g.jpg");
+					series.firstAired.should.equal("2012-02-06");
+					series.imdbId.should.equal("tt1677734");
+	                break;
+	              case "255048":
+	                series.language.should.equal("en");
+	                series.name.should.eql("RBO 3.0");
+					series.banner.should.equal("graphical/255048-g2.jpg");
+					series.firstAired.should.equal("2012-01-09");
+	                break;
+	              case "238461":
+	                series.language.should.equal("en");
+	                series.name.should.eql("30 Vies");
+					series.banner.should.equal("graphical/238461-g.jpg");
+					series.firstAired.should.equal("2011-01-10");
+					series.imdbId.should.equal("tt1851101");
+					series.overview.should.equal("In 30 lives, Marina Orsini plays the role of Gabrielle, a professor in a multiethnic high school. 30 lives, is also the story of 29 students from Gabrielle, which we will follow the stories and plots throughout the season. But 30 lives is, first and foremost, the story of lives that come together, collide, and who, day after day, will vibrate Quebec.");
+	                break;
+	            }
+	          });
+	          ids.should.eql(["255912", "255048", "238461"]);
+	          done();
+ 		   });
+ 	   });
+
+   });
 
   describe("getLanguages()", function() {
     it("should call the callback with error", function(done) {
