@@ -5,6 +5,12 @@
       "regexs": [
         "\"version\": \"###\""
       ]
+    },
+    {
+      "name": "Readme.md",
+      "regexs": [
+        "Version ###"
+      ]
     }
   ]
 }

@@ -1,12 +1,13 @@
 {
   "author": "Matias Meno <m@tias.me>",
-  "name": "thetvdb",
-  "description": "A library to communicate with thetvdb.com",
-  "version": "0.0.2",
-  "website": "https://github.com/enyo/node-thetvdb",
+  "name": "tvdb",
+  "description": "A wrapper for thetvdb.coms XML API",
+  "version": "0.0.3",
+  "website": "https://github.com/enyo/node-tvdb",
+  "keywords": "thetvdb thetvdb.com xml api",
   "repository": {
     "type": "git",
-    "url": "git://github.com/enyo/node-thetvdb.git"
+    "url": "git://github.com/enyo/node-tvdb.git"
   },
   "main": "index.js",
   "scripts": {
