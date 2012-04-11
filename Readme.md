@@ -66,3 +66,15 @@ Mirrors is an Array containing objects that are formatted like this:
     { id: "1", url: "http://thetvdb.com", types: [ "xml", "banner", "zip" ] }
 
 `types` contains *at least* one of `"xml"`, `"banner"` and `"zip"`.
+
+
+
+### Get server time
+
+    tvdb.getServerTime(function(err), time) {
+      if (err) return;
+
+      // Handle time.
+    };
+
+Time is an integer.
