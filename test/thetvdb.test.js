@@ -7,9 +7,18 @@ var TheTVDB = require("../lib/index")
 describe("thetvdb", function() {
   describe("constructor", function() {
     it("should store options correctly", function() {
-      var options = { apiKey: '1234', port: 8080, initialHost: 'anothertvdb' }
+      var options = { apiKey: '1234', port: 8080, initialHost: 'anothertvdb', language: "fr" }
        , thetvdb = new TheTVDB(options);
       thetvdb.options.should.eql(options);
+    });
+  });
+
+  describe("setLanguage()", function() {
+    it("should set options.language", function() {
+      var thetvdb = new TheTVDB({ apiKey: "123" });
+      thetvdb.options.language.should.equal("en");
+      thetvdb.setLanguage("de");
+      thetvdb.options.language.should.equal("de");
     });
   });
 
