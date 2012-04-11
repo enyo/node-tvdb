@@ -13,6 +13,11 @@ to know what this library will be wrapping.
 [thetvdb]: http://www.thetvdb.com/
 
 
+This project uses [semantic versioning](http://semver.org/) and uses this [tag script][https://github.com/enyo/tag] to tag the versions.
+
+I use the great [mocha testing framework](http://visionmedia.github.com/mocha/) with the (also great) [should assertion library](https://github.com/visionmedia/should.js) for testing.  
+If you contribute to this project, please write a test, and make sure all existing tests pass.
+
 ## Usage
 
 > First off, [get an API key from thetvdb](http://thetvdb.com/?tab=apiregister).
