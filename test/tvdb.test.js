@@ -51,8 +51,10 @@ describe("tvdb", function() {
   describe("get()", function() {
     it("should correctly use http to fetch the resource");
     it("should parse the XML if the parseXml option has been passed");
+    it("should use path if provided or use pathName to translate it to a valid path");
     it("should call the callback with error if the response was not valid");
     it("should call the callback with error if the xml was invalid");
+    it("should call the callback with error if the xml was just an error string");
   });
 
   describe("getUrl()", function() {
@@ -60,6 +62,17 @@ describe("tvdb", function() {
       var options = { apiKey: '1234abc' }
        , tvdb = new TVDB(options);
       tvdb.getPath("mirrors").should.equal("/api/1234abc/mirrors.xml");
+    })
+    it("should return all urls with language", function() {
+      var options = { apiKey: '1234abc', language: "de" }
+       , tvdb = new TVDB(options);
+      tvdb.getPath("findTvShow").should.equal("/api/GetSeries.php?seriesname=#{name}&language=de");
+    })
+    it("should additionally replace all values passed in the values object and escape them", function() {
+      var options = { apiKey: '1234abc', language: "de" }
+       , tvdb = new TVDB(options);
+      tvdb.getPath("findTvShow", { name: "bestname" }).should.equal("/api/GetSeries.php?seriesname=bestname&language=de");
+      tvdb.getPath("findTvShow", { name: "weird  & name" }).should.equal("/api/GetSeries.php?seriesname=weird%20%20%26%20name&language=de");
     })
   });
   describe("getMirrors()", function() {
@@ -180,6 +193,78 @@ describe("tvdb", function() {
         done();
       });
     });
+  });
+
+
+
+  describe("findTvShow()", function() {
+    it("should call the callback with error", function(done) {
+      tvdbWithError.findTvShow("test name", function(err, mirrors) {
+        err.should.be.instanceof(Error);
+        err.message.should.equal("test error");
+        done();
+      });
+    });
+
+    it("should use the right path", function(done) {
+      var tvdb = new TVDB({ apiKey: '1234abc' });
+
+      tvdb.get = function(opts, callback) {
+        opts.path.indexOf("seriesname=abc%26%20c").should.not.equal(-1);
+        done();
+      };
+
+      tvdb.findTvShow("abc& c", function(err, time) {
+      });
+    });
+
+    it("should return a valid list if only one tv show", function(done) {
+      xmlUri = __dirname + "/data/find_tv_show.single.xml";
+      tvdb.findTvShow("dexter", function(err, tvShows) {
+        var data = { id: '79349', language: 'en', name: 'Dexter', imdbId: 'tt0773262', zap2itId: 'SH859795', banner: 'graphical/79349-g6.jpg', overview: 'Overview text.' };
+
+        tvShows.length.should.equal(1);
+        var tvShow = tvShows[0];
+
+        tvShow.firstAired.getTime().should.equal(new Date("2006-10-01").getTime());
+
+        _.each(data, function(value, key) {
+          tvShow[key].should.equal(value);
+        });
+
+        done();
+      });
+    });
+
+    it("should return a valid list if only one tv show with very little information", function(done) {
+      xmlUri = __dirname + "/data/find_tv_show.naked.xml";
+      tvdb.findTvShow("dexter", function(err, tvShows) {
+        tvShows.length.should.equal(1);
+        tvShows[0].should.eql({ id: '79349', language: 'en', name: 'Dexter' });
+        done();
+      });
+    });
+
+    it("should return a valid list if multiple tv shows", function(done) {
+      xmlUri = __dirname + "/data/find_tv_show.multiple.xml";
+      tvdb.findTvShow("dexter", function(err, tvShows) {
+        tvShows.length.should.equal(2);
+        tvShows[0].name.should.equal("Dexter");
+        tvShows[0].id.should.equal("79349");
+        tvShows[1].name.should.equal("Cliff Dexter");
+        tvShows[1].id.should.equal("159611");
+        done();
+      });
+    });
+
+    it("should return a valid list if no tv show was found", function(done) {
+      xmlUri = __dirname + "/data/no_data.xml";
+      tvdb.findTvShow("dexter", function(err, tvShows) {
+        tvShows.length.should.equal(0);
+        done();
+      });
+    });
+
   });
 
 });
