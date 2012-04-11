@@ -72,4 +72,28 @@ Mirrors is an Array containing objects that are formatted like this:
       // Handle time.
     };
 
-Time is an integer.
+`time` is an integer.
+
+
+### Find a TV Show
+
+    tvdb.findTvShow("Mad Men", function(err), tvShows) {
+      if (err) return;
+      // Handle tvShows.
+    };
+
+`tvShows` is an array of `tvShow` objects which contain following obligatory values:
+
+  - `id` {String}
+  - `language` {String}
+  - `name` {String}
+
+and following optional values:
+
+  - `firstAired` {Date}
+  - `imdbId` {String}
+  - `zap2itId` {String}
+  - `banner` {String}
+  - `overview` {String}
+
+
