@@ -1,4 +1,4 @@
-# TheTVDB.com Node library Version 0.0.4
+# TheTVDB.com Node library Version 0.0.5
 
 It's a wrapper for [thetvdb][]s XML API, written in JavaScript for [node][].
 You won't be in contact with any XML if you use this library.
@@ -26,8 +26,8 @@ If you contribute to this project, please write a test, and make sure all existi
 
 ### Include and configure the library
 
-    var TheTVDB = require("thetvdb")
-      , thetvdb = new TheTVDB({ apiKey: "YOUR_KEY" });
+    var TVDB = require("tvdb")
+      , tvdb = new TVDB({ apiKey: "YOUR_KEY" });
 
 Possible configuration options are:
 
@@ -35,9 +35,24 @@ Possible configuration options are:
   - `initialHost` {String} (optional) Default: `thetvdb.com`
   - `port` {Number} (optional) Default: 80
 
+### Get available languages
+
+    tvdb.getLanguages(function(err), languages) {
+      if (err) return;
+
+      // Handle languages.
+    };
+
+TVDB uses `"en"` (english) as default when it fetches data. If you want another language, use this function, get the language
+you want (or let the user decide which language s/he wants) and use the `abbreviation` as new language.
+
+To set the language as new default, simply call:
+
+    tvdb.setLanguage(language.abbreviation);
+
 ### Get a list of mirrors
 
-    thetvdb.getMirrors(function(err, mirrors) {
+    tvdb.getMirrors(function(err, mirrors) {
 
       // err is set when either the http call to thetvdb didn't work, or the
       // XML couldn't be parsed.
