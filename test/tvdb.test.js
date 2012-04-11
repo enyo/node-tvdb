@@ -10,6 +10,14 @@ describe("tvdb", function() {
     callback(new Error("test error"));
   };
   
+  var options = { apiKey: '1234abc' }
+   , tvdb = new TVDB(options)
+   , xmlUri;
+
+  tvdb.get = function(opts, callback) {
+    var xml = fs.readFileSync(xmlUri, "utf8");
+    xmlParser.parseString(xml, callback);
+  };
 
   describe("constructor", function() {
     it("should store options correctly", function() {
@@ -55,10 +63,6 @@ describe("tvdb", function() {
     })
   });
   describe("getMirrors()", function() {
-    var options = { apiKey: '1234abc' }
-     , tvdb = new TVDB(options)
-     , xmlUri;
-
     it("should call the callback with error", function(done) {
       tvdbWithError.getMirrors(function(err, mirrors) {
         err.should.be.instanceof(Error);
@@ -67,11 +71,6 @@ describe("tvdb", function() {
       });
     });
 
-    tvdb.get = function(opts, callback) {
-      var xml = fs.readFileSync(xmlUri, "utf8");
-      xmlParser.parseString(xml, callback);
-    };
-    
     it("should return a valid list if only one mirror", function(done) {
       xmlUri = __dirname + "/data/mirrors.single.xml";
       tvdb.getMirrors(function(err, mirrors) {
@@ -129,10 +128,6 @@ describe("tvdb", function() {
   });
 
   describe("getLanguages()", function() {
-    var options = { apiKey: '1234abc' }
-     , tvdb = new TVDB(options)
-     , xmlUri;
-
     it("should call the callback with error", function(done) {
       tvdbWithError.getMirrors(function(err, mirrors) {
         err.should.be.instanceof(Error);
@@ -140,11 +135,6 @@ describe("tvdb", function() {
         done();
       });
     });
-
-    tvdb.get = function(opts, callback) {
-      var xml = fs.readFileSync(xmlUri, "utf8");
-      xmlParser.parseString(xml, callback);
-    };
     
     it("should return a valid list if only one language", function(done) {
       // That's a crazy use case, but so am I.
@@ -173,4 +163,23 @@ describe("tvdb", function() {
     });
 
   });
+
+  describe("getServerTime()", function() {
+    it("should call the callback with error", function(done) {
+      tvdbWithError.getServerTime(function(err, mirrors) {
+        err.should.be.instanceof(Error);
+        err.message.should.equal("test error");
+        done();
+      });
+    });
+
+    it("should return the server time correctly", function(done) {
+      xmlUri = __dirname + "/data/server_time.xml";
+      tvdb.getServerTime(function(err, time) {
+        time.should.be.a("number").and.equal(1334162822);
+        done();
+      });
+    });
+  });
+
 });
