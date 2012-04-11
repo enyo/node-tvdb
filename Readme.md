@@ -15,7 +15,7 @@ to know what this library will be wrapping.
 
 ## Usage
 
-> First of, [get an API key from thetvdb](http://thetvdb.com/?tab=apiregister).
+> First off, [get an API key from thetvdb](http://thetvdb.com/?tab=apiregister).
 > Withouth an API key you won't be able to do anything with this library.
 
 
