@@ -35,6 +35,14 @@ Possible configuration options are:
   - `initialHost` {String} (optional) Default: `thetvdb.com`
   - `port` {Number} (optional) Default: 80
 
+### Get available languages
+
+    thetvdb.getLanguages(function(err), languages) {
+      if (err) return;
+
+      // Handle languages.
+    };
+
 ### Get a list of mirrors
 
     thetvdb.getMirrors(function(err, mirrors) {
