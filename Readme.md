@@ -82,7 +82,7 @@ Time is an integer.
 ### Get a list of series by name
 
 	tvdb.getSeriesByName(['My', 'Favorite', 'Sitcom'], function(err, allSeries) {
-		// err is set when either th ehttp call to thetvdb didn't work, the
+		// err is set when either the http call to thetvdb didn't work, the
 		// XML couldn't be parsed, or the list of keywords to search for was
 		// not set.
 		if (err) return;
