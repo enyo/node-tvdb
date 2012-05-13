@@ -1,6 +1,6 @@
-# TheTVDB.com Node library Version 0.0.7
+# TheTVDB.com Node library Version 0.0.8
 
-It's a wrapper for [thetvdb][]s XML API, written in JavaScript for [node][].
+It's a wrapper for [thetvdb][]s XML API, written in CoffeeScript for [node][].
 You won't be in contact with any XML if you use this library.
 
 > The library isn't finished yet. I'll update this README as I get along so
