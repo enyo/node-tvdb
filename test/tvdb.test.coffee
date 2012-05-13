@@ -3,6 +3,7 @@ TVDB = require "../lib/index"
 fs = require "fs"
 _ = require "underscore"
 xmlParser = new (require "xml2js").Parser();
+http = require "http"
 
 
 describe "tvdb", ->
@@ -45,13 +46,67 @@ describe "tvdb", ->
       tvdb.options.language.should.equal "de"
 
   describe "get()", ->
-    it "should correctly use http to fetch the resource"
-    it "should parse the XML if the parseXml option has been passed"
-    it "should use path if provided or use pathName to translate it to a valid path"
-    it "should call the callback with error if the response was not valid"
-    it "should call the callback with error if the xml was invalid"
-    it "should call the callback with error if the xml was just an error string"
+    httpGet = null
+    httpData = "some data"
+    statusCode = 200
+    httpOptionsInterceptor = null
+    beforeEach ->
+      statusCode = 200
+      httpOptionsInterceptor = ->
+      httpGet = http.get
+      http.get = (options, callback) ->
+        httpOptionsInterceptor options
+        callback
+          statusCode: statusCode
+          setEncoding: (encoding) -> return null
+          on: (event, callback) ->
+            switch event
+              when "data"
+                setTimeout (-> callback(httpData)), 5
+              when "end"
+                setTimeout callback, 10
 
+        { on: (event, callback) -> }
+    afterEach ->
+      http.get = httpGet
+
+    it "should correctly use http to fetch the resource", (done) ->
+      httpData = "blabla"
+      tvdb.get { parseXml: false }, (err, data) ->
+        data.should.eql "blabla"
+        done()
+        
+    it "should parse the XML if the parseXml option has been passed", (done) ->
+      httpData = "<some><xml>test</xml></some>"
+      tvdb.get { parseXml: true }, (err, data) ->
+        data.should.eql { xml: "test" }
+        done()
+
+    it "should forward the options provided", (done) ->
+      httpOptionsInterceptor = (options) ->
+        options.should.eql host: 'thetvdb.com', port: 80, parseXml: false, path: '/some/path'
+        done()
+      tvdb.get { path: "/some/path", parseXml: false }, (err, data) ->
+
+    it "should use pathName to translate it to a valid path", (done) ->
+      httpOptionsInterceptor = (options) ->
+        options.should.eql host: 'thetvdb.com', port: 80, parseXml: false, path: '/api/123/mirrors.xml'
+        done()
+      tvdb.get { pathName: "mirrors", parseXml: false }, (err, data) ->
+
+    it "should call the callback with error if the response was not valid", (done) ->
+      statusCode = 404
+      tvdb.get { parseXml: false }, (err, data) ->
+        err.should.be.instanceof Error
+        err.message.should.eql "Status: 404"
+        done()
+    it "should call the callback with error if the xml was invalid", (done) ->
+      httpData = "invalid xml"
+      tvdb.get { parseXml: true }, (err, data) ->
+        err.should.be.instanceof Error
+        err.message.indexOf("Invalid XML").should.equal 0
+        done()
+      
 
   describe "getUrl()", ->
     it "should return all urls with API key", ->
@@ -71,7 +126,7 @@ describe "tvdb", ->
       tvdb.getPath("findTvShow", { name: "weird  & name" }).should.equal "/api/GetSeries.php?seriesname=weird%20%20%26%20name&language=de"
 
   describe "unzip()", ->
-    it "should properly unzip a single file, and call done.", (done) ->
+    it "should properly unzip a single file, and call done", (done) ->
       tvdb.unzip fs.readFileSync(__dirname + "/data/dexter.en.zip"), (err, file) ->
         content = fs.readFileSync __dirname + "/data/dexter.en.zip.deflated/actors.xml", "utf-8"
         file["actors.xml"].should.eql content

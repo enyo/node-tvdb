@@ -75,7 +75,7 @@ class TVDB
   # @param  {Object} options
   # @param  {Function} callback
   # @api private
-  get = (options, callback) ->
+  get: (options, callback) ->
     options = _.extend({ host: this.options.initialHost, port: this.options.port, parseXml: true }, options)
 
     if options.pathName?
@@ -85,7 +85,7 @@ class TVDB
     http.get options, (res) ->
       response = ''
 
-      if 100 > res.statusCode >= 300
+      unless 100 <= res.statusCode < 300
         callback new Error("Status: #{res.statusCode}")
         return
 
@@ -95,7 +95,9 @@ class TVDB
 
       res.on 'end', ->
         if options.parseXml
-          xmlParser.parseString response, (err, result) -> callback err, result
+          xmlParser.parseString response, (err, result) ->
+            if err then err = new Error "Invalid XML: #{err.message}"
+            callback err, result
         else
           callback null, response
     .on "error", (e) -> callback e
