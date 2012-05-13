@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Actors>
+<Actor>
+  <id>70947</id>
+  <Image>actors/70947.jpg</Image>
+  <Name>Michael C. Hall</Name>
+  <Role>Dexter Morgan</Role>
+  <SortOrder>0</SortOrder>
+</Actor>
+<Actor>
+  <id>70948</id>
+  <Image>actors/70948.jpg</Image>
+  <Name>Jennifer Carpenter</Name>
+  <Role>Debra Morgan</Role>
+  <SortOrder>1</SortOrder>
+</Actor>
+<Actor>
+  <id>77844</id>
+  <Image>actors/77844.jpg</Image>
+  <Name>C.S. Lee</Name>
+  <Role>Vince Masuka</Role>
+  <SortOrder>2</SortOrder>
+</Actor>
+<Actor>
+  <id>77842</id>
+  <Image>actors/77842.jpg</Image>
+  <Name>James Remar</Name>
+  <Role>Harry Morgan</Role>
+  <SortOrder>2</SortOrder>
+</Actor>
+<Actor>
+  <id>77841</id>
+  <Image>actors/77841.jpg</Image>
+  <Name>Julie Benz</Name>
+  <Role>Rita Bennett</Role>
+  <SortOrder>2</SortOrder>
+</Actor>
+<Actor>
+  <id>70951</id>
+  <Image>actors/70951.jpg</Image>
+  <Name>Lauren Velez</Name>
+  <Role>Lt. Maria Laguerta</Role>
+  <SortOrder>2</SortOrder>
+</Actor>
+<Actor>
+  <id>70950</id>
+  <Image>actors/70950.jpg</Image>
+  <Name>David Zayas</Name>
+  <Role>Angel Batista</Role>
+  <SortOrder>2</SortOrder>
+</Actor>
+<Actor>
+  <id>111691</id>
+  <Image>actors/111691.jpg</Image>
+  <Name>Desmond Harrington</Name>
+  <Role>Joey Quinn</Role>
+  <SortOrder>2</SortOrder>
+</Actor>
+<Actor>
+  <id>78124</id>
+  <Image>actors/78124.jpg</Image>
+  <Name>Keith Carradine</Name>
+  <Role>Lt. Frank Lundy</Role>
+  <SortOrder>3</SortOrder>
+</Actor>
+<Actor>
+  <id>77843</id>
+  <Image>actors/77843.jpg</Image>
+  <Name>Christina Robinson</Name>
+  <Role>Astor Bennett</Role>
+  <SortOrder>3</SortOrder>
+</Actor>
+<Actor>
+  <id>70949</id>
+  <Image>actors/70949.jpg</Image>
+  <Name>Erik King</Name>
+  <Role>Sergeant James Doakes</Role>
+  <SortOrder>3</SortOrder>
+</Actor>
+<Actor>
+  <id>293127</id>
+  <Image>actors/293127.jpg</Image>
+  <Name>Johnny Lee Miller</Name>
+  <Role>Jordan Chase</Role>
+  <SortOrder>3</SortOrder>
+</Actor>
+<Actor>
+  <id>293126</id>
+  <Image>actors/293126.jpg</Image>
+  <Name>Colin Hanks</Name>
+  <Role>Travis Marshall</Role>
+  <SortOrder>3</SortOrder>
+</Actor>
+<Actor>
+  <id>291622</id>
+  <Image>actors/291622.jpg</Image>
+  <Name>Edward James Olmos</Name>
+  <Role>Professor James Gellar</Role>
+  <SortOrder>3</SortOrder>
+</Actor>
+<Actor>
+  <id>291621</id>
+  <Image>actors/291621.jpg</Image>
+  <Name>Mos Def</Name>
+  <Role>Brother Sam</Role>
+  <SortOrder>3</SortOrder>
+</Actor>
+<Actor>
+  <id>220571</id>
+  <Image>actors/220571.jpg</Image>
+  <Name>Julia Stiles</Name>
+  <Role>Lumen Ann Pierce</Role>
+  <SortOrder>3</SortOrder>
+</Actor>
+<Actor>
+  <id>196731</id>
+  <Image>actors/196731.jpg</Image>
+  <Name>Jimmy Smits</Name>
+  <Role>Miguel Prado</Role>
+  <SortOrder>3</SortOrder>
+</Actor>
+<Actor>
+  <id>196721</id>
+  <Image>actors/196721.jpg</Image>
+  <Name>Jaime Murray</Name>
+  <Role>Lila Tournay</Role>
+  <SortOrder>3</SortOrder>
+</Actor>
+<Actor>
+  <id>130301</id>
+  <Image>actors/130301.jpg</Image>
+  <Name>John Lithgow</Name>
+  <Role>Arthur Mitchell</Role>
+  <SortOrder>3</SortOrder>
+</Actor>
+</Actors>

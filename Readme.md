@@ -1,4 +1,4 @@
-# TheTVDB.com Node library Version 0.0.6
+# TheTVDB.com Node library Version 0.0.7
 
 It's a wrapper for [thetvdb][]s XML API, written in JavaScript for [node][].
 You won't be in contact with any XML if you use this library.
@@ -32,14 +32,14 @@ If you contribute to this project, please write a test, and make sure all existi
 Possible configuration options are:
 
   - `apiKey` {String}
-  - `initialHost` {String} (optional) Default: `thetvdb.com`
+  - `language` {String} (optional) Default: `"en"`. Use getLanguages() if you want another language.
+  - `initialHost` {String} (optional) Default: `"thetvdb.com"`
   - `port` {Number} (optional) Default: 80
 
 ### Get available languages
 
     tvdb.getLanguages(function(err), languages) {
       if (err) return;
-
       // Handle languages.
     };
 
@@ -53,11 +53,7 @@ To set the language as new default, simply call:
 ### Get a list of mirrors
 
     tvdb.getMirrors(function(err, mirrors) {
-
-      // err is set when either the http call to thetvdb didn't work, or the
-      // XML couldn't be parsed.
       if (err) return;
-
       // Handle mirrors.
     });
 
@@ -73,8 +69,31 @@ Mirrors is an Array containing objects that are formatted like this:
 
     tvdb.getServerTime(function(err), time) {
       if (err) return;
-
       // Handle time.
     };
 
-Time is an integer.
+`time` is an integer.
+
+
+### Find a TV Show
+
+    tvdb.findTvShow("Mad Men", function(err), tvShows) {
+      if (err) return;
+      // Handle tvShows.
+    };
+
+`tvShows` is an array of `tvShow` objects which contain following obligatory values:
+
+  - `id` {String}
+  - `language` {String}
+  - `name` {String}
+
+and following optional values:
+
+  - `firstAired` {Date}
+  - `imdbId` {String}
+  - `zap2itId` {String}
+  - `banner` {String}
+  - `overview` {String}
+
+
