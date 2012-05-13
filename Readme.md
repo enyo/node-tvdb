@@ -1,6 +1,6 @@
-# TheTVDB.com Node library Version 0.0.8
+# TheTVDB.com Node library Version 0.0.9
 
-It's a wrapper for [thetvdb][]s XML API, written in CoffeeScript for [node][].
+It's a wrapper for [thetvdb][]s XML API, written in [CoffeeScript][] for [node][].
 You won't be in contact with any XML if you use this library.
 
 > The library isn't finished yet. I'll update this README as I get along so
@@ -11,6 +11,7 @@ to know what this library will be wrapping.
 
 [node]: http://nodejs.org/
 [thetvdb]: http://www.thetvdb.com/
+[coffeescript]: http://coffeescript.org/
 
 
 This project uses [semantic versioning](http://semver.org/) and uses this [tag script](https://github.com/enyo/tag) to tag the versions.
@@ -24,10 +25,17 @@ If you contribute to this project, please write a test, and make sure all existi
 > Withouth an API key you won't be able to do anything with this library.
 
 
+All code samples are presented in both, Javascript and CoffeScript.
+
 ### Include and configure the library
 
+    // JS
     var TVDB = require("tvdb")
       , tvdb = new TVDB({ apiKey: "YOUR_KEY" });
+
+    # Coffee
+    TVDB = require("tvdb")
+    tvdb = new TVDB apiKey: "YOUR_KEY"
 
 Possible configuration options are:
 
@@ -38,24 +46,40 @@ Possible configuration options are:
 
 ### Get available languages
 
-    tvdb.getLanguages(function(err), languages) {
+    // JS
+    tvdb.getLanguages(function(err, languages) {
       if (err) return;
       // Handle languages.
     };
+
+    # Coffee
+    tvdb.getLanguages (err, languages) ->
+      if err? then return
+      # Handle languages
 
 TVDB uses `"en"` (english) as default when it fetches data. If you want another language, use this function, get the language
 you want (or let the user decide which language s/he wants) and use the `abbreviation` as new language.
 
 To set the language as new default, simply call:
 
+    // JS
     tvdb.setLanguage(language.abbreviation);
+    
+    # Coffee
+    tvdb.setLanguage language.abbreviation
 
 ### Get a list of mirrors
 
+    // JS
     tvdb.getMirrors(function(err, mirrors) {
       if (err) return;
       // Handle mirrors.
     });
+
+    # Coffee
+    tvdb.getMirrors (err, mirrors) ->
+      if err? then return
+      # Handle mirrors
 
 Mirrors is an Array containing objects that are formatted like this:
 
@@ -67,20 +91,32 @@ Mirrors is an Array containing objects that are formatted like this:
 
 ### Get server time
 
-    tvdb.getServerTime(function(err), time) {
+    // JS
+    tvdb.getServerTime(function(err, time) {
       if (err) return;
       // Handle time.
     };
+
+    // Coffee
+    tvdb.getServerTime (err, time) ->
+      if err? then return
+      # Handle time
 
 `time` is an integer.
 
 
 ### Find a TV Show
 
-    tvdb.findTvShow("Mad Men", function(err), tvShows) {
+    // JS
+    tvdb.findTvShow("Mad Men", function(err, tvShows) {
       if (err) return;
       // Handle tvShows.
     };
+
+    # Coffee
+    tvdb.findTvShow "Mad Men", (err, tvShows) ->
+      if err? then return
+      # Handle tvShows
 
 `tvShows` is an array of `tvShow` objects which contain following obligatory values:
 
