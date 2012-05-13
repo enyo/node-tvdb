@@ -241,6 +241,7 @@ class TVDB
     @get path: this.getPath("getInfo", options), (err, zip) ->
       if err? then done(err); return
 
+      ###
       formattedTvShows = [ ]
 
       unless _.isEmpty tvShows
@@ -260,7 +261,7 @@ class TVDB
             formattedTvShow[trgKey] = srcValue if srcValue
 
           formattedTvShows.push formattedTvShow
-
+      ###
       done undefined, formattedTvShows
 
 
