@@ -212,12 +212,4 @@ describe("tvdb", function() {
 
   });
 
-  describe("unzip()", function() {
-    it("should properly unzip a single file, and call done.", function(done) {
-      tvdb.unzip(fs.readFileSync(__dirname + "/data/dexter.en.zip"), "actors.xml", function(err, file) {
-        file.readAsText("actors.xml").should.eql(fs.readFileSync(__dirname + "/data/dexter.en.zip.deflated/actors.xml", "utf-8"));
-        done();
-      })
-    });
-  });
 });

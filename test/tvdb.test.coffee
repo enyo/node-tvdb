@@ -70,6 +70,12 @@ describe "tvdb", ->
       tvdb.getPath("findTvShow", { name: "bestname" }).should.equal "/api/GetSeries.php?seriesname=bestname&language=de"
       tvdb.getPath("findTvShow", { name: "weird  & name" }).should.equal "/api/GetSeries.php?seriesname=weird%20%20%26%20name&language=de"
 
+  describe "unzip()", ->
+    it "should properly unzip a single file, and call done.", (done) ->
+      tvdb.unzip fs.readFileSync(__dirname + "/data/dexter.en.zip"), (err, file) ->
+        content = fs.readFileSync __dirname + "/data/dexter.en.zip.deflated/actors.xml", "utf-8"
+        file["actors.xml"].should.eql content
+        done()
 
 
 
