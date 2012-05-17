@@ -1,5 +1,21 @@
+# Copyright(c) 2012 Matias Meno <m@tias.me>
+
+# ### TheTVDB.com Node library
+# 
+# It's a wrapper for [thetvdb][]s XML API, written in [CoffeeScript][] for [node][].
+# You won't be in contact with any XML if you use this library.
+# 
+# [node]: http://nodejs.org/
+# [thetvdb]: http://www.thetvdb.com/
+# [coffeescript]: http://coffeescript.org/
+# 
+# Please refere to the `Readme` for a more complete documentation.
+
+# ### Lets see the code!
 
 
+
+# Dependencies
 xmlParser = new (require "xml2js").Parser()
 http = require "http"
 _ = require "underscore"
@@ -8,44 +24,36 @@ fs = require "fs"
 Zip = require 'node-zip'
 
 
-
-
-# The default options you can override by passing an options object in the constructor.
-# 
-#     - `apiKey` String
-#     - `language` String (optional) Default: 'en' You can set this later, with setLanguage(). Use
-#                         getLanguages() to get a list of languages, and use the abbreviation.
-#     - `initialHost` String (optional) Default: `thetvdb.com`
-#     - `port` Number (optional) Default: 80
-# 
-# @type {Object}
-defaultOptions = 
-  apiKey: null
-  language: "en"
-  initialHost: "thetvdb.com"
-  port: 80
-
-
-
+# Class definition
 class TVDB
 
-  # @param {Object} options
-  # @api public
+
+
+  # The default options you can override by passing an options object in the constructor.
+  # 
+  #   - `apiKey` String
+  #   - `language` String (optional) Default: 'en' You can set this later, with setLanguage(). Use
+  #                       getLanguages() to get a list of languages, and use the abbreviation.
+  #   - `initialHost` String (optional) Default: `thetvdb.com`
+  #   - `port` Number (optional) Default: 80
+  defaultOptions = 
+    apiKey: null
+    language: "en"
+    initialHost: "thetvdb.com"
+    port: 80
+
+
+  # See `defaultOptions` for available options.
   constructor: (options) ->
     @options = _.extend(_.clone(defaultOptions), options || { })
     unless this.options.apiKey then throw new Error "You have to provide an API key."
     
   # Sets the language option.
-  # 
-  # @param {String} abbreviation E.g.: "fr"
   setLanguage: (abbreviation) ->
     @options.language = abbreviation
 
 
   # A list of thetvdb.com paths.
-  # 
-  # @type {Object}
-  # @api private
   paths:
     mirrors: '/api/#{apiKey}/mirrors.xml'
     languages: '/api/#{apiKey}/languages.xml'
@@ -56,11 +64,6 @@ class TVDB
 
 
   # Returns the path and inserts api key and language if necessary.
-  # 
-  # @param  {String} pathName E.g.: mirrors
-  # @param  {Object} values an optional hashmap object with values to replace in the path.
-  # @return {String} 
-  # @api private
   getPath: (pathName, values) ->
     path = @paths[pathName]
 
@@ -71,35 +74,49 @@ class TVDB
 
 
   # Shortcut for http.get
-  # 
-  # @param  {Object} options
-  # @param  {Function} callback
-  # @api private
   get: (options, callback) ->
-    options = _.extend({ host: this.options.initialHost, port: this.options.port, parseXml: true }, options)
+    options = _.extend({ host: this.options.initialHost, port: this.options.port }, options)
 
     if options.pathName?
       options.path = @getPath options.pathName
       delete options.pathName
 
-    http.get options, (res) ->
-      response = ''
-
+    http.get options, (res) =>
       unless 100 <= res.statusCode < 300
         callback new Error("Status: #{res.statusCode}")
         return
 
-      res.setEncoding 'utf8'
-      res.on 'data', (chunk) ->
-        response += chunk
+      contentType = res.getHeader "content-type"
 
-      res.on 'end', ->
-        if options.parseXml
-          xmlParser.parseString response, (err, result) ->
-            if err then err = new Error "Invalid XML: #{err.message}"
-            callback err, result
-        else
-          callback null, response
+      dataBuffers = [ ]
+      dataLen = 0
+
+      res.on 'data', (chunk) ->
+        dataBuffers.push chunk
+        dataLen += chunk.length
+
+      res.on 'end', =>
+        dataBuffer = new Buffer dataLen
+
+        pos = 0
+        for data, i in dataBuffers
+          data.copy dataBuffer, pos
+          pos += data.length
+
+        switch contentType
+          when "text/xml", "application/xml"
+            xmlParser.parseString dataBuffer.toString(), (err, result) ->
+              err = new Error "Invalid XML: #{err.message}" if err?
+              callback err, result
+
+          when "application/zip"
+            @unzip dataBuffer, (err, result) ->
+              err = new Error "Invalid XML: #{err.message}" if err?
+              callback err, result
+
+          else
+            callback null, dataBuffer.toString()
+
     .on "error", (e) -> callback e
 
 
@@ -110,13 +127,9 @@ class TVDB
   #   - `id` String
   #   - `name` String
   #   - `abbreviation` String
-  # 
-  # @param {Function} done
-  # @api public
   getLanguages: (done) ->
     @get pathName: "languages", (err, response) ->
       if err? then done(err); return
-
       languages = if _.isArray(response.Language) then response.Language else [response.Language]
       done undefined, languages
 
@@ -128,9 +141,6 @@ class TVDB
   #   - `id` String
   #   - `url` String
   #   - `types` Array containing at least one of `xml`, `banner` and `zip`.
-  # 
-  # @param {Function} done
-  # @api public
   getMirrors: (done) ->
     @get pathName: "mirrors", (err, response) ->
       if err? then done(err); return
@@ -154,9 +164,6 @@ class TVDB
 
 
   # Gets the server timestamp
-  # 
-  # @param  {Function} done 
-  # @api public
   getServerTime: (done) ->
     @get pathName: "serverTime", (err, response) ->
       if err? then done(err); return
@@ -176,10 +183,6 @@ class TVDB
   #   - `id`
   #   - `language`
   #   - `name`
-  # 
-  # @param  {String} name 
-  # @param  {Function} done 
-  # @api public
   findTvShow: (name, done) ->
     @get path: this.getPath("findTvShow", name: name), (err, tvShows) ->
       if err? then done(err); return
@@ -210,12 +213,7 @@ class TVDB
 
 
 
-  # Unzips a zip buffer and returns the provided file.
-  # 
-  # @param  {Buffer} zipBuffer
-  # @param  {Function} done called with `err`, `extractedFile`
-  # @return {Object} An object with the filenames as keys and the contents as values.
-  # @api private
+  # Unzips a zip buffer and returns an object with the filenames as keys and the data as values.
   unzip: (zipBuffer, done) ->
     zip = new Zip zipBuffer.toString("base64"), base64: true, checkCRC32: true
     files = { }
@@ -229,40 +227,18 @@ class TVDB
   # The callback `done` gets invoked with `err` and `info`.
   # 
   # `info` contains:
-  # 
-  # @param  {String} name 
-  # @param  {Function} done 
-  # @api public
   getInfo: (mirrorUrl, tvShowId, done, language) ->
-    options = parseXml: false
+    options = { }
 
     options.language = language if language?
 
-    @get path: this.getPath("getInfo", options), (err, zip) ->
+    @get path: this.getPath("getInfo", options), (err, files) ->
       if err? then done(err); return
 
-      ###
-      formattedTvShows = [ ]
+      for filename, xml of files
+        console.log filename
 
-      unless _.isEmpty tvShows
-        tvShows = if _.isArray tvShows.Series then tvShows.Series else [tvShows.Series]
-        keyMapping = IMDB_ID: 'imdbId', zap2it_id: 'zap2itId', banner: 'banner', Overview: 'overview'
-
-        tvShows.forEach (tvShow) ->
-          formattedTvShow =
-            id: tvShow.id
-            language: tvShow.language
-            name: tvShow.SeriesName
-
-          formattedTvShow.firstAired = new Date(tvShow.FirstAired) if tvShow.FirstAired
-
-          _.each keyMapping, (trgKey, srcKey) ->
-            srcValue = tvShow[srcKey]
-            formattedTvShow[trgKey] = srcValue if srcValue
-
-          formattedTvShows.push formattedTvShow
-      ###
-      done undefined, formattedTvShows
+      done undefined, files
 
 
 
