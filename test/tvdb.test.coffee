@@ -7,11 +7,7 @@ http = require "http"
 
 
 describe "tvdb", ->
-  tvdbWithError = new TVDB { apiKey: "12" }
-
-  tvdbWithError.get = (opts, callback) ->
-    callback new Error "test error"
-  
+ 
   options = { apiKey: '1234abc' }
   tvdb = new TVDB options
   xmlUri = null
@@ -49,6 +45,7 @@ describe "tvdb", ->
     httpGet = null
     httpData = "some data"
     statusCode = 200
+    contentType = "text/plain"
     httpOptionsInterceptor = null
     beforeEach ->
       statusCode = 200
@@ -58,53 +55,74 @@ describe "tvdb", ->
         httpOptionsInterceptor options
         callback
           statusCode: statusCode
+          getHeader: (which) ->
+            return contentType if which == "content-type"
           setEncoding: (encoding) -> return null
           on: (event, callback) ->
             switch event
               when "data"
-                setTimeout (-> callback(httpData)), 5
+                buffer = if httpData instanceof Buffer then httpData else new Buffer httpData 
+                setTimeout (-> callback(buffer)), 5
               when "end"
                 setTimeout callback, 10
-
         { on: (event, callback) -> }
+
     afterEach ->
       http.get = httpGet
 
     it "should correctly use http to fetch the resource", (done) ->
       httpData = "blabla"
-      tvdb.get { parseXml: false }, (err, data) ->
+      tvdb.get { }, (err, data) ->
         data.should.eql "blabla"
         done()
         
-    it "should parse the XML if the parseXml option has been passed", (done) ->
+    it "should parse the XML if the contentType was application/xml", (done) ->
       httpData = "<some><xml>test</xml></some>"
-      tvdb.get { parseXml: true }, (err, data) ->
+      contentType = "application/xml"
+      tvdb.get { }, (err, data) ->
+        data.should.eql { xml: "test" }
+        done()
+
+    it "should parse the XML if the contentType was text/xml", (done) ->
+      httpData = "<some><xml>test</xml></some>"
+      contentType = "text/xml"
+      tvdb.get { }, (err, data) ->
         data.should.eql { xml: "test" }
         done()
 
     it "should forward the options provided", (done) ->
       httpOptionsInterceptor = (options) ->
-        options.should.eql host: 'thetvdb.com', port: 80, parseXml: false, path: '/some/path'
+        options.should.eql host: 'thetvdb.com', port: 80, path: '/some/path'
         done()
-      tvdb.get { path: "/some/path", parseXml: false }, (err, data) ->
+      tvdb.get { path: "/some/path" }, (err, data) ->
 
     it "should use pathName to translate it to a valid path", (done) ->
       httpOptionsInterceptor = (options) ->
-        options.should.eql host: 'thetvdb.com', port: 80, parseXml: false, path: '/api/123/mirrors.xml'
+        options.should.eql host: 'thetvdb.com', port: 80, path: '/api/123/mirrors.xml'
         done()
-      tvdb.get { pathName: "mirrors", parseXml: false }, (err, data) ->
+      tvdb.get { pathName: "mirrors" }, (err, data) ->
 
     it "should call the callback with error if the response was not valid", (done) ->
       statusCode = 404
-      tvdb.get { parseXml: false }, (err, data) ->
+      tvdb.get { }, (err, data) ->
         err.should.be.instanceof Error
         err.message.should.eql "Status: 404"
         done()
+
     it "should call the callback with error if the xml was invalid", (done) ->
       httpData = "invalid xml"
-      tvdb.get { parseXml: true }, (err, data) ->
+      contentType = "application/xml"
+      tvdb.get { }, (err, data) ->
         err.should.be.instanceof Error
         err.message.indexOf("Invalid XML").should.equal 0
+        done()
+      
+    it "should unzip zip files directly", (done) ->
+      httpData = fs.readFileSync "#{__dirname}/data/test.zip"
+      contentType = "application/zip"
+      tvdb.get { }, (err, data) ->
+        data.should.not.be.instanceof Buffer
+        data["test.txt"].should.eql "test content"
         done()
       
 
