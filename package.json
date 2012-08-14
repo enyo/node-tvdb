@@ -4,7 +4,7 @@
   "description": "A wrapper for thetvdb.coms XML API",
   "version": "0.0.11-dev",
   "website": "https://github.com/enyo/node-tvdb",
-  "keywords": "thetvdb thetvdb.com xml api",
+  "keywords": [ "thetvdb", "thetvdb.com", "xml", "api" ],
   "repository": {
     "type": "git",
     "url": "git://github.com/enyo/node-tvdb.git"
