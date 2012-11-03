@@ -16,7 +16,7 @@
 
 
 # Dependencies
-xmlParser = new (require "xml2js").Parser()
+xmlParser = new (require "xml2js").Parser explicitRoot: no, explicitArray: no, emptyTag: '{}'
 http = require "http"
 _ = require "underscore"
 querystring = require "querystring"
@@ -185,11 +185,11 @@ class TVDB
   #   - `name`
   findTvShow: (name, done) ->
     @get path: this.getPath("findTvShow", name: name), (err, tvShows) ->
-      if err? then done(err); return
+      return done err if err?
 
       formattedTvShows = [ ]
 
-      unless _.isEmpty tvShows
+      if tvShows?.Series?.length
         tvShows = if _.isArray tvShows.Series then tvShows.Series else [tvShows.Series]
         keyMapping = IMDB_ID: 'imdbId', zap2it_id: 'zap2itId', banner: 'banner', Overview: 'overview'
 
@@ -246,3 +246,7 @@ class TVDB
 # Exposing TVDB
 # @type {TVDB}
 module.exports = TVDB
+
+
+# Exposing the XML Parser as well
+module.exports.xmlParser = xmlParser

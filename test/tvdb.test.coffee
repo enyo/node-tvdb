@@ -1,8 +1,8 @@
 
-TVDB = require "../lib/index"
+TVDB = require "../src/index"
 fs = require "fs"
 _ = require "underscore"
-xmlParser = new (require "xml2js").Parser();
+xmlParser = TVDB.xmlParser
 http = require "http"
 
 
