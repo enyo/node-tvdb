@@ -16,7 +16,7 @@
 
 
 # Dependencies
-xmlParser = new (require "xml2js").Parser explicitRoot: no, explicitArray: no, emptyTag: '{}'
+xmlParser = new (require "xml2js").Parser explicitRoot: no, explicitArray: no
 http = require "http"
 _ = require "underscore"
 querystring = require "querystring"
@@ -189,7 +189,7 @@ class TVDB
 
       formattedTvShows = [ ]
 
-      if tvShows?.Series?.length
+      if tvShows?.Series?
         tvShows = if _.isArray tvShows.Series then tvShows.Series else [tvShows.Series]
         keyMapping = IMDB_ID: 'imdbId', zap2it_id: 'zap2itId', banner: 'banner', Overview: 'overview'
 
@@ -223,6 +223,8 @@ class TVDB
 
 
   # Retrieves all information for a specific TV Show.
+  #
+  # Not finished yet!
   # 
   # The callback `done` gets invoked with `err` and `info`.
   # 
@@ -235,8 +237,8 @@ class TVDB
     @get path: this.getPath("getInfo", options), (err, files) ->
       if err? then done(err); return
 
-      for filename, xml of files
-        console.log filename
+      # for filename, xml of files
+      #   console.log filename
 
       done undefined, files
 
