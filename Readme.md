@@ -1,4 +1,9 @@
-# TheTVDB.com Node library Version 0.0.11
+# TheTVDB.com Node library Version 0.0.12-dev
+
+
+Master: ![Build status](https://travis-ci.org/enyo/node-tvdb.png?branch=master)  
+Development: ![Build status](https://travis-ci.org/enyo/node-tvdb.png)
+
 
 It's a wrapper for [thetvdb][]s XML API, written in [CoffeeScript][] for [node][].
 You won't be in contact with any XML if you use this library.

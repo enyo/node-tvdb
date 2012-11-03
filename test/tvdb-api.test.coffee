@@ -1,4 +1,4 @@
-TVDB = require "../lib/index"
+TVDB = require "../src/index"
 fs = require "fs"
 _ = require "underscore"
 xmlParser = new (require("xml2js")).Parser()
@@ -190,6 +190,7 @@ describe "tvdb", ->
     it "should return a valid list if no tv show was found", (done) ->
       dataFileUri = __dirname + "/data/no_data.xml"
       tvdb.findTvShow "dexter", (err, tvShows) ->
+        (err == undefined).should.be.ok
         tvShows.length.should.equal 0
         done()
 
