@@ -1,6 +1,6 @@
-BIN = mocha
+BIN = @./node_modules/mocha/bin/mocha
 
 test:
-	$(BIN)
+	$(BIN) --compilers coffee:coffee-script
 
 .PHONY: test
