@@ -55,8 +55,7 @@ describe "tvdb", ->
         httpOptionsInterceptor options
         callback
           statusCode: statusCode
-          getHeader: (which) ->
-            return contentType if which == "content-type"
+          headers: {'content-type': contentType}
           setEncoding: (encoding) -> return null
           on: (event, callback) ->
             switch event

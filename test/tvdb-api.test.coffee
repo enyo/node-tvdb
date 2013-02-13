@@ -23,8 +23,7 @@ describe "tvdb", ->
     http.get = (options, callback) ->
       callback
         statusCode: statusCode
-        getHeader: (which) ->
-          return contentType if which == "content-type"
+        headers: {'content-type': contentType}
         setEncoding: (encoding) -> return null
         on: (event, callback) ->
           switch event
