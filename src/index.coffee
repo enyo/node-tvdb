@@ -86,7 +86,9 @@ class TVDB
         callback new Error("Status: #{res.statusCode}")
         return
 
-      contentType = res.getHeader "content-type"
+      contentType = res.headers['content-type'];
+      if contentType.split(';').length
+        contentType = contentType.split(';')[0]
 
       dataBuffers = [ ]
       dataLen = 0
