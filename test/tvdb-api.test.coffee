@@ -195,12 +195,23 @@ describe "tvdb", ->
 
   describe "getInfo()", ->
     it "should call the callback with error", (done) ->
-      tvdbWithError.getInfo "mirrorurl.com", "id", (err, mirrors) ->
+      tvdbWithError.getInfo "id", (err, mirrors) ->
         err.should.be.instanceof Error
         err.message.should.equal "test error"
         done()
     it "should return a valid object containing Json objects", (done) ->
       contentType = "application/zip"
       dataFileUri = __dirname + "/data/dexter.en.zip"
-      tvdb.getInfo "mirrorurl.com", "id", (err, info) ->
+      tvdb.getInfo "id", (err, info) ->
+        info.series.should.exist
+        info.episode.should.exist
+        info.banner.should.exist
+        info.actor.should.exist
+        info.series.SeriesName.should.equal "Dexter"
+        info.series.id.should.equal "79349"
+        info.episode[0].EpisodeName.should.equal "Early Cuts: Alex Timmons (Chapter 1)"
+        info.episode[0].id.should.equal "1285811"
+        info.banner[0].id.should.equal "30362"
+        info.actor[0].Name.should.equal "Michael C. Hall"
+        info.actor[0].id.should.equal "70947"
         done()

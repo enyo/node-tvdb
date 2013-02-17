@@ -52,6 +52,11 @@ class TVDB
   setLanguage: (abbreviation) ->
     @options.language = abbreviation
 
+  # Sets the mirrorUrl option
+  setMirror: (host, port) ->
+    @options.initialHost = host if host?
+    @options.port = port if port?
+
 
   # A list of thetvdb.com paths.
   paths:
@@ -172,10 +177,6 @@ class TVDB
       done undefined, parseInt(response.Time, 10)
 
 
-
-
-
-
   # Finds a tv show by its name.
   # 
   # The callback `done` gets invoked with `err` and `tvShows`.
@@ -212,7 +213,35 @@ class TVDB
       done undefined, formattedTvShows
 
 
+  # Retrieves all information for a specific TV Show.
+  #
+  # The callback `done` gets invoked with `err` and `info`.
+  #
+  # `info` contains following objects:
+  # 
+  #   - `series`
+  #   - `episode`
+  #   - `actor`
+  #   - `banner`
+  getInfo: (tvShowId, done, language) ->
+    options = { language: 'en', seriesId: tvShowId }
+    options.language = language if language?
 
+    @get path: this.getPath("getInfo", options), (err, files) ->
+      return done err if err?
+
+      formattedResult = { }
+
+      for filename, xml of files
+        xmlParser.parseString xml, (err, result) ->
+          return done new Error "Invalid XML: #{err.message}" if err?
+
+          formattedResult['actor'] = result.Actor if result.Actor?
+          formattedResult['banner'] = result.Banner if result.Banner?
+          formattedResult['series'] = result.Series if result.Series?
+          formattedResult['episode'] = result.Episode if result.Episode?
+
+      done undefined, formattedResult
 
 
   # Unzips a zip buffer and returns an object with the filenames as keys and the data as values.
@@ -222,29 +251,6 @@ class TVDB
     _.each zip.files, (file, index) ->
       files[file.name] = file.data
     done null, files
-
-
-  # Retrieves all information for a specific TV Show.
-  #
-  # Not finished yet!
-  # 
-  # The callback `done` gets invoked with `err` and `info`.
-  # 
-  # `info` contains:
-  getInfo: (mirrorUrl, tvShowId, done, language) ->
-    options = { }
-
-    options.language = language if language?
-
-    @get path: this.getPath("getInfo", options), (err, files) ->
-      if err? then done(err); return
-
-      # for filename, xml of files
-      #   console.log filename
-
-      done undefined, files
-
-
 
 
 # Exposing TVDB
