@@ -203,15 +203,15 @@ describe "tvdb", ->
       contentType = "application/zip"
       dataFileUri = __dirname + "/data/dexter.en.zip"
       tvdb.getInfo "id", (err, info) ->
-        info.series.should.exist
-        info.episode.should.exist
-        info.banner.should.exist
-        info.actor.should.exist
-        info.series.SeriesName.should.equal "Dexter"
-        info.series.id.should.equal "79349"
-        info.episode[0].EpisodeName.should.equal "Early Cuts: Alex Timmons (Chapter 1)"
-        info.episode[0].id.should.equal "1285811"
-        info.banner[0].id.should.equal "30362"
-        info.actor[0].Name.should.equal "Michael C. Hall"
-        info.actor[0].id.should.equal "70947"
+        info.tvShow.should.exist
+        info.episodes.should.exist
+        info.banners.should.exist
+        info.actors.should.exist
+        info.tvShow.name.should.equal "Dexter"
+        info.tvShow.id.should.equal "79349"
+        info.episodes[0].name.should.equal "Early Cuts: Alex Timmons (Chapter 1)"
+        info.episodes[0].id.should.equal "1285811"
+        info.banners[0].id.should.equal "30362"
+        info.actors[0].name.should.equal "Michael C. Hall"
+        info.actors[0].id.should.equal "70947"
         done()

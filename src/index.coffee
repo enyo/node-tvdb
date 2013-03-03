@@ -1,14 +1,14 @@
 # Copyright(c) 2012 Matias Meno <m@tias.me>
 
 # ### TheTVDB.com Node library
-# 
+#
 # It's a wrapper for [thetvdb][]s XML API, written in [CoffeeScript][] for [node][].
 # You won't be in contact with any XML if you use this library.
-# 
+#
 # [node]: http://nodejs.org/
 # [thetvdb]: http://www.thetvdb.com/
 # [coffeescript]: http://coffeescript.org/
-# 
+#
 # Please refere to the `Readme` for a more complete documentation.
 
 # ### Lets see the code!
@@ -30,13 +30,13 @@ class TVDB
 
 
   # The default options you can override by passing an options object in the constructor.
-  # 
+  #
   #   - `apiKey` String
   #   - `language` String (optional) Default: 'en' You can set this later, with setLanguage(). Use
   #                       getLanguages() to get a list of languages, and use the abbreviation.
   #   - `initialHost` String (optional) Default: `thetvdb.com`
   #   - `port` Number (optional) Default: 80
-  defaultOptions = 
+  defaultOptions =
     apiKey: null
     language: "en"
     initialHost: "thetvdb.com"
@@ -47,7 +47,7 @@ class TVDB
   constructor: (options) ->
     @options = _.extend(_.clone(defaultOptions), options || { })
     unless this.options.apiKey then throw new Error "You have to provide an API key."
-    
+
   # Sets the language option.
   setLanguage: (abbreviation) ->
     @options.language = abbreviation
@@ -128,9 +128,9 @@ class TVDB
 
 
   # Calls `done` with `err` if an error occured, and an array containing a list of languages.
-  # 
+  #
   # A language is an object containing:
-  # 
+  #
   #   - `id` String
   #   - `name` String
   #   - `abbreviation` String
@@ -142,9 +142,9 @@ class TVDB
 
 
   # Calls `done` with `err` if an error occured, and an array containing a list of mirrors.
-  # 
+  #
   # A mirror is an object containing:
-  # 
+  #
   #   - `id` String
   #   - `url` String
   #   - `types` Array containing at least one of `xml`, `banner` and `zip`.
@@ -178,11 +178,11 @@ class TVDB
 
 
   # Finds a tv show by its name.
-  # 
+  #
   # The callback `done` gets invoked with `err` and `tvShows`.
-  # 
+  #
   # `tvShows` contains:
-  # 
+  #
   #   - `id`
   #   - `language`
   #   - `name`
@@ -218,7 +218,7 @@ class TVDB
   # The callback `done` gets invoked with `err` and `info`.
   #
   # `info` contains following objects:
-  # 
+  #
   #   - `series`
   #   - `episode`
   #   - `actor`
@@ -236,10 +236,89 @@ class TVDB
         xmlParser.parseString xml, (err, result) ->
           return done new Error "Invalid XML: #{err.message}" if err?
 
-          formattedResult['actor'] = result.Actor if result.Actor?
-          formattedResult['banner'] = result.Banner if result.Banner?
-          formattedResult['series'] = result.Series if result.Series?
-          formattedResult['episode'] = result.Episode if result.Episode?
+          if result.Actor?
+            formattedActors = []
+            keyMapping = Image: 'image', Role: 'role', SortOrder: 'sortOrder'
+
+            actors = if _.isArray result.Actor then result.Actor else [result.Actor]
+            actors.forEach (actor) ->
+              formattedActor =
+                id: actor.id,
+                name: actor.Name
+
+              _.each keyMapping, (trgKey, srcKey) ->
+                srcValue = actor[srcKey]
+                formattedActor[trgKey] = srcValue if srcValue
+
+              formattedActors.push formattedActor
+
+            formattedResult['actors'] = formattedActors
+
+          if result.Banner?
+            formattedBanners = []
+            keyMapping = Colors: 'colors', ThumbnailPath: 'thumbnailPath', VigettePath: 'vigenettePath', Season: 'season'
+
+            banners = if _.isArray result.Banner then result.Banner else [result.Banner]
+            banners.forEach (banner) ->
+              formattedBanner =
+                id: banner.id,
+                path: banner.BannerPath,
+                type: banner.BannerType,
+                type2: banner.BannerType2,
+                language: banner.Language,
+                rating: banner.Rating,
+                ratingCount: banner.RatingCount
+
+              _.each keyMapping, (trgKey, srcKey) ->
+                srcValue = banner[srcKey]
+                formattedBanner[trgKey] = srcValue if srcValue
+
+              formattedBanners.push formattedBanner
+
+            formattedResult['banners'] = formattedBanners
+
+          if result.Series?
+            keyMapping = IMDB_ID: 'imdbId', zap2it_id: 'zap2itId', banner: 'banner', Overview: 'overview'
+
+            tvShow = result.Series
+            formattedTvShow =
+              id: tvShow.id,
+              genre: tvShow.Genre,
+              language: tvShow.Language,
+              name: tvShow.SeriesName
+
+            formattedTvShow.firstAired = new Date(tvShow.FirstAired) if tvShow.FirstAired?
+
+            _.each keyMapping, (trgKey, srcKey) ->
+              srcValue = tvShow[srcKey]
+              formattedTvShow[trgKey] = srcValue if srcValue
+
+            formattedResult['tvShow'] = formattedTvShow
+
+          if result.Episode?
+            formattedEpisodes = []
+            keyMapping = Overview: 'overview', Rating: 'rating', RatingCount: 'ratingCount', Writer: 'writer'
+
+            episodes = if _.isArray result.Episode then result.Episode else [result.Episode]
+            episodes.forEach (episode) ->
+              formattedEpisode =
+                id: episode.id,
+                name: episode.EpisodeName,
+                number: episode.EpisodeNumber,
+                language: episode.Language,
+                season: episode.SeasonNumber
+                seasonId: episode.seasonid,
+                tvShowId: episode.seriesid
+
+              formattedEpisode.firstAired = new Date(episode.FirstAired) if episode.FirstAired?
+
+              _.each keyMapping, (trgKey, srcKey) ->
+                srcValue = episode[srcKey]
+                formattedEpisode[trgKey] = srcValue if srcValue
+
+              formattedEpisodes.push formattedEpisode
+
+            formattedResult['episodes'] = formattedEpisodes
 
       done undefined, formattedResult
 
