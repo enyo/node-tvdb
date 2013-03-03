@@ -1,14 +1,14 @@
 # Copyright(c) 2012 Matias Meno <m@tias.me>
 
 # ### TheTVDB.com Node library
-#
+# 
 # It's a wrapper for [thetvdb][]s XML API, written in [CoffeeScript][] for [node][].
 # You won't be in contact with any XML if you use this library.
-#
+# 
 # [node]: http://nodejs.org/
 # [thetvdb]: http://www.thetvdb.com/
 # [coffeescript]: http://coffeescript.org/
-#
+# 
 # Please refere to the `Readme` for a more complete documentation.
 
 # ### Lets see the code!
@@ -30,13 +30,13 @@ class TVDB
 
 
   # The default options you can override by passing an options object in the constructor.
-  #
+  # 
   #   - `apiKey` String
   #   - `language` String (optional) Default: 'en' You can set this later, with setLanguage(). Use
   #                       getLanguages() to get a list of languages, and use the abbreviation.
   #   - `initialHost` String (optional) Default: `thetvdb.com`
   #   - `port` Number (optional) Default: 80
-  defaultOptions =
+  defaultOptions = 
     apiKey: null
     language: "en"
     initialHost: "thetvdb.com"
@@ -47,7 +47,7 @@ class TVDB
   constructor: (options) ->
     @options = _.extend(_.clone(defaultOptions), options || { })
     unless this.options.apiKey then throw new Error "You have to provide an API key."
-
+    
   # Sets the language option.
   setLanguage: (abbreviation) ->
     @options.language = abbreviation
@@ -128,9 +128,9 @@ class TVDB
 
 
   # Calls `done` with `err` if an error occured, and an array containing a list of languages.
-  #
+  # 
   # A language is an object containing:
-  #
+  # 
   #   - `id` String
   #   - `name` String
   #   - `abbreviation` String
@@ -142,9 +142,9 @@ class TVDB
 
 
   # Calls `done` with `err` if an error occured, and an array containing a list of mirrors.
-  #
+  # 
   # A mirror is an object containing:
-  #
+  # 
   #   - `id` String
   #   - `url` String
   #   - `types` Array containing at least one of `xml`, `banner` and `zip`.
@@ -178,11 +178,11 @@ class TVDB
 
 
   # Finds a tv show by its name.
-  #
+  # 
   # The callback `done` gets invoked with `err` and `tvShows`.
-  #
+  # 
   # `tvShows` contains:
-  #
+  # 
   #   - `id`
   #   - `language`
   #   - `name`
@@ -219,10 +219,10 @@ class TVDB
   #
   # `info` contains following objects:
   #
-  #   - `series`
-  #   - `episode`
-  #   - `actor`
-  #   - `banner`
+  #   - `tvShow`
+  #   - `episodes`
+  #   - `actors`
+  #   - `banners`
   getInfo: (tvShowId, done, language) ->
     options = { language: 'en', seriesId: tvShowId }
     options.language = language if language?
