@@ -65,6 +65,8 @@ class TVDB
     serverTime: '/api/Updates.php?type=none'
     findTvShow: '/api/GetSeries.php?seriesname=#{name}&language=#{language}'
     getInfo: '/api/#{apiKey}/series/#{seriesId}/all/#{language}.zip'
+    getInfoTvShow: '/api/#{apiKey}/series/#{seriesId}/#{language}.xml'
+    getInfoEpisode: '/api/#{apiKey}/episodes/#{episodesId}/#{language}.xml'
 
 
 
@@ -226,6 +228,7 @@ class TVDB
   getInfo: (tvShowId, done, language) ->
     options = { language: 'en', seriesId: tvShowId }
     options.language = language if language?
+    self = this
 
     @get path: this.getPath("getInfo", options), (err, files) ->
       return done err if err?
@@ -278,50 +281,50 @@ class TVDB
             formattedResult['banners'] = formattedBanners
 
           if result.Series?
-            keyMapping = IMDB_ID: 'imdbId', zap2it_id: 'zap2itId', banner: 'banner', Overview: 'overview'
-
-            tvShow = result.Series
-            formattedTvShow =
-              id: tvShow.id,
-              genre: tvShow.Genre,
-              language: tvShow.Language,
-              name: tvShow.SeriesName
-
-            formattedTvShow.firstAired = new Date(tvShow.FirstAired) if tvShow.FirstAired?
-
-            _.each keyMapping, (trgKey, srcKey) ->
-              srcValue = tvShow[srcKey]
-              formattedTvShow[trgKey] = srcValue if srcValue
-
-            formattedResult['tvShow'] = formattedTvShow
+            formattedResult['tvShow'] = self.formatTvShow result.Series
 
           if result.Episode?
             formattedEpisodes = []
-            keyMapping = Overview: 'overview', Rating: 'rating', RatingCount: 'ratingCount', Writer: 'writer'
 
             episodes = if _.isArray result.Episode then result.Episode else [result.Episode]
             episodes.forEach (episode) ->
-              formattedEpisode =
-                id: episode.id,
-                name: episode.EpisodeName,
-                number: episode.EpisodeNumber,
-                language: episode.Language,
-                season: episode.SeasonNumber
-                seasonId: episode.seasonid,
-                tvShowId: episode.seriesid
-
-              formattedEpisode.firstAired = new Date(episode.FirstAired) if episode.FirstAired?
-
-              _.each keyMapping, (trgKey, srcKey) ->
-                srcValue = episode[srcKey]
-                formattedEpisode[trgKey] = srcValue if srcValue
-
-              formattedEpisodes.push formattedEpisode
+              formattedEpisodes.push self.formatEpisode episode
 
             formattedResult['episodes'] = formattedEpisodes
 
       done undefined, formattedResult
 
+
+  # Retrieves basic information for a specific TV Show.
+  #
+  # The callback `done`gets invoked with `err` and `info.
+  #
+  # `info` contains an object with tv show information.
+  getInfoTvShow: (tvShowId, done, language) ->
+    options = { language: 'en', seriesId: tvShowId }
+    options.language = language if language?
+    self = this
+
+    @get path: this.getPath("getInfoTvShow", options), (err, files) ->
+      return done err if err?
+
+      done undefined, self.formatTvShow files.Series
+
+
+  # Retrieves basic information for a specific TV Show episode.
+  #
+  # The callback `done`gets invoked with `err` and `info.
+  #
+  # `info` contains an object with tv show episode information.
+  getInfoEpisode: (episodeId, done, language) ->
+    options = { language: 'en', episodesId: episodeId }
+    options.language = language if language?
+    self = this
+
+    @get path: this.getPath("getInfoEpisode", options), (err, files) ->
+      return done err if err?
+
+      done undefined, self.formatEpisode files.Episode
 
   # Unzips a zip buffer and returns an object with the filenames as keys and the data as values.
   unzip: (zipBuffer, done) ->
@@ -331,6 +334,43 @@ class TVDB
       files[file.name] = file.data
     done null, files
 
+
+  formatTvShow: (tvShow) ->
+    keyMapping = IMDB_ID: 'imdbId', zap2it_id: 'zap2itId', banner: 'banner', Overview: 'overview'
+    formattedTvShow =
+      id: tvShow.id,
+      genre: tvShow.Genre,
+      language: tvShow.Language,
+      name: tvShow.SeriesName
+
+    formattedTvShow.firstAired = new Date(tvShow.FirstAired) if tvShow.FirstAired?
+
+    _.each keyMapping, (trgKey, srcKey) ->
+      srcValue = tvShow[srcKey]
+      formattedTvShow[trgKey] = srcValue if srcValue
+
+    return formattedTvShow
+
+
+  formatEpisode: (episode) ->
+    keyMapping = Overview: 'overview', Rating: 'rating', RatingCount: 'ratingCount', Writer: 'writer'
+
+    formattedEpisode =
+      id: episode.id,
+      name: episode.EpisodeName,
+      number: episode.EpisodeNumber,
+      language: episode.Language,
+      season: episode.SeasonNumber
+      seasonId: episode.seasonid,
+      tvShowId: episode.seriesid
+
+    formattedEpisode.firstAired = new Date(episode.FirstAired) if episode.FirstAired?
+
+    _.each keyMapping, (trgKey, srcKey) ->
+      srcValue = episode[srcKey]
+      formattedEpisode[trgKey] = srcValue if srcValue
+
+    return formattedEpisode
 
 # Exposing TVDB
 # @type {TVDB}

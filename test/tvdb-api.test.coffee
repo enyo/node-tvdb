@@ -215,3 +215,30 @@ describe "tvdb", ->
         info.actors[0].name.should.equal "Michael C. Hall"
         info.actors[0].id.should.equal "70947"
         done()
+
+  describe "getInfoTvShow()", ->
+    it "should call the callback with error", (done) ->
+      tvdbWithError.getInfoTvShow "id", (err, tvShow) ->
+        err.should.be.instanceof Error
+        err.message.should.equal "test error"
+        done()
+    it "should return a valid object containing Json data", (done) ->
+      contentType = "text/xml"
+      dataFileUri = __dirname + "/data/series.single.xml"
+      tvdb.getInfoTvShow "id", (err, tvShow) ->
+        tvShow.id.should.equal "70327"
+        Object.getOwnPropertyNames(tvShow).length.should.equal 9
+        done()
+
+  describe "getInfoEpisode()", ->
+    it "should call the callback with error", (done) ->
+      tvdbWithError.getInfoEpisode "id", (err, episode) ->
+        err.should.be.instanceof Error
+        err.message.should.equal "test error"
+        done()
+    it "should return a valid object containing Json data", (done) ->
+      dataFileUri = __dirname + "/data/episodes.single.xml"
+      tvdb.getInfoEpisode "id", (err, episode) ->
+        episode.id.should.equal "3954591"
+        Object.getOwnPropertyNames(episode).length.should.equal 11
+        done()
