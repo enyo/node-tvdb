@@ -23,8 +23,7 @@ describe "tvdb", ->
     http.get = (options, callback) ->
       callback
         statusCode: statusCode
-        getHeader: (which) ->
-          return contentType if which == "content-type"
+        headers: {'content-type': contentType}
         setEncoding: (encoding) -> return null
         on: (event, callback) ->
           switch event
@@ -196,12 +195,50 @@ describe "tvdb", ->
 
   describe "getInfo()", ->
     it "should call the callback with error", (done) ->
-      tvdbWithError.getInfo "mirrorurl.com", "id", (err, mirrors) ->
+      tvdbWithError.getInfo "id", (err, mirrors) ->
         err.should.be.instanceof Error
         err.message.should.equal "test error"
         done()
     it "should return a valid object containing Json objects", (done) ->
       contentType = "application/zip"
       dataFileUri = __dirname + "/data/dexter.en.zip"
-      tvdb.getInfo "mirrorurl.com", "id", (err, info) ->
+      tvdb.getInfo "id", (err, info) ->
+        info.tvShow.should.exist
+        info.episodes.should.exist
+        info.banners.should.exist
+        info.actors.should.exist
+        info.tvShow.name.should.equal "Dexter"
+        info.tvShow.id.should.equal "79349"
+        info.episodes[0].name.should.equal "Early Cuts: Alex Timmons (Chapter 1)"
+        info.episodes[0].id.should.equal "1285811"
+        info.banners[0].id.should.equal "30362"
+        info.actors[0].name.should.equal "Michael C. Hall"
+        info.actors[0].id.should.equal "70947"
+        done()
+
+  describe "getInfoTvShow()", ->
+    it "should call the callback with error", (done) ->
+      tvdbWithError.getInfoTvShow "id", (err, tvShow) ->
+        err.should.be.instanceof Error
+        err.message.should.equal "test error"
+        done()
+    it "should return a valid object containing Json data", (done) ->
+      contentType = "text/xml"
+      dataFileUri = __dirname + "/data/series.single.xml"
+      tvdb.getInfoTvShow "id", (err, tvShow) ->
+        tvShow.id.should.equal "70327"
+        Object.getOwnPropertyNames(tvShow).length.should.equal 9
+        done()
+
+  describe "getInfoEpisode()", ->
+    it "should call the callback with error", (done) ->
+      tvdbWithError.getInfoEpisode "id", (err, episode) ->
+        err.should.be.instanceof Error
+        err.message.should.equal "test error"
+        done()
+    it "should return a valid object containing Json data", (done) ->
+      dataFileUri = __dirname + "/data/episodes.single.xml"
+      tvdb.getInfoEpisode "id", (err, episode) ->
+        episode.id.should.equal "3954591"
+        Object.getOwnPropertyNames(episode).length.should.equal 11
         done()

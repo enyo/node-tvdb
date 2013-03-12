@@ -41,6 +41,16 @@ describe "tvdb", ->
       tvdb.setLanguage "de"
       tvdb.options.language.should.equal "de"
 
+  describe "setMirror()", ->
+    it "should set options.initialHost", ->
+      tvdb = new TVDB apiKey: "123"
+      tvdb.options.initialHost.should.equal "thetvdb.com"
+      tvdb.options.port.should.equal 80
+      tvdb.setMirror "thetvdbtest.com", 8080
+      tvdb.options.initialHost.should.equal "thetvdbtest.com"
+      tvdb.options.port.should.equal 8080
+      tvdb = new TVDB apiKey: "123"
+
   describe "get()", ->
     httpGet = null
     httpData = "some data"
@@ -55,8 +65,7 @@ describe "tvdb", ->
         httpOptionsInterceptor options
         callback
           statusCode: statusCode
-          getHeader: (which) ->
-            return contentType if which == "content-type"
+          headers: {'content-type': contentType}
           setEncoding: (encoding) -> return null
           on: (event, callback) ->
             switch event
