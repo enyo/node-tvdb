@@ -242,3 +242,40 @@ describe "tvdb", ->
         episode.id.should.equal "3954591"
         Object.getOwnPropertyNames(episode).length.should.equal 11
         done()
+
+  describe "getUpdates()", ->
+    it "should call the callback with error", (done) ->
+      tvdbWithError.getUpdates 'day', (err, files) ->
+        err.should.be.instanceof Error
+        err.message.should.equal "test error"
+        done()
+    it "should return a valid object containing Json objects", (done) ->
+      contentType = "application/zip"
+      dataFileUri = __dirname + "/data/updates_day.zip"
+      tvdb.getUpdates 'day', (err, updates) ->
+        updates.updateInfo.should.exist
+        updates.tvShows.should.exist
+        updates.episodes.should.exist
+        updates.banners.should.exist
+        updates.updateInfo.time.should.equal "1362426001"
+        updates.tvShows[0].id.should.equal "70327"
+        updates.episodes[0].time.should.equal "1362402840"
+        updates.banners[0].path.should.equal "posters/266443-1.jpg"
+        done()
+    it "should not allow a non-valid period", (done) ->
+      tvdb.getUpdates "weekly", (err, updates) ->
+        err.should.be.instanceof Error
+        err.message.should.equal "Invalid period weekly"
+        done()
+    it "should use different path depending on period", (done) ->
+      localTvdb = new TVDB apiKey: "12"
+      localTvdb.get = (opts) ->
+        opts.path.should.equal "/api/12/updates/updates_day.zip"
+      localTvdb.getUpdates 'day', (err, updates) ->
+      localTvdb.get = (opts) ->
+        opts.path.should.equal "/api/12/updates/updates_week.zip"
+      localTvdb.getUpdates 'week', (err, updates) ->
+      localTvdb.get = (opts) ->
+        opts.path.should.equal "/api/12/updates/updates_month.zip"
+        done()
+      localTvdb.getUpdates 'month', (err, updates) ->
