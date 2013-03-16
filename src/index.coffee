@@ -52,6 +52,11 @@ class TVDB
   setLanguage: (abbreviation) ->
     @options.language = abbreviation
 
+  # Sets the mirrorUrl option
+  setMirror: (host, port) ->
+    @options.initialHost = host if host?
+    @options.port = port if port?
+
 
   # A list of thetvdb.com paths.
   paths:
@@ -60,6 +65,9 @@ class TVDB
     serverTime: '/api/Updates.php?type=none'
     findTvShow: '/api/GetSeries.php?seriesname=#{name}&language=#{language}'
     getInfo: '/api/#{apiKey}/series/#{seriesId}/all/#{language}.zip'
+    getInfoTvShow: '/api/#{apiKey}/series/#{seriesId}/#{language}.xml'
+    getInfoEpisode: '/api/#{apiKey}/episodes/#{episodesId}/#{language}.xml'
+    getUpdates: '/api/#{apiKey}/updates/updates_#{period}.zip'
 
 
 
@@ -86,7 +94,9 @@ class TVDB
         callback new Error("Status: #{res.statusCode}")
         return
 
-      contentType = res.getHeader "content-type"
+      contentType = res.headers['content-type'];
+      if contentType.split(';').length
+        contentType = contentType.split(';')[0]
 
       dataBuffers = [ ]
       dataLen = 0
@@ -170,10 +180,6 @@ class TVDB
       done undefined, parseInt(response.Time, 10)
 
 
-
-
-
-
   # Finds a tv show by its name.
   # 
   # The callback `done` gets invoked with `err` and `tvShows`.
@@ -210,8 +216,116 @@ class TVDB
       done undefined, formattedTvShows
 
 
+  # Retrieves all information for a specific TV Show.
+  #
+  # The callback `done` gets invoked with `err` and `info`.
+  #
+  # `info` contains following objects:
+  #
+  #   - `tvShow`
+  #   - `episodes`
+  #   - `actors`
+  #   - `banners`
+  getInfo: (tvShowId, done, language) ->
+    options = { language: 'en', seriesId: tvShowId }
+    options.language = language if language?
+    self = this
+
+    @get path: this.getPath("getInfo", options), (err, files) ->
+      return done err if err?
+
+      formattedResult = { }
+
+      for filename, xml of files
+        xmlParser.parseString xml, (err, result) ->
+          return done new Error "Invalid XML: #{err.message}" if err?
+
+          if result.Actor?
+            formattedActors = []
+            keyMapping = Image: 'image', Role: 'role', SortOrder: 'sortOrder'
+
+            actors = if _.isArray result.Actor then result.Actor else [result.Actor]
+            actors.forEach (actor) ->
+              formattedActor =
+                id: actor.id,
+                name: actor.Name
+
+              _.each keyMapping, (trgKey, srcKey) ->
+                srcValue = actor[srcKey]
+                formattedActor[trgKey] = srcValue if srcValue
+
+              formattedActors.push formattedActor
+
+            formattedResult['actors'] = formattedActors
+
+          if result.Banner?
+            formattedBanners = []
+            keyMapping = Colors: 'colors', ThumbnailPath: 'thumbnailPath', VigettePath: 'vigenettePath', Season: 'season'
+
+            banners = if _.isArray result.Banner then result.Banner else [result.Banner]
+            banners.forEach (banner) ->
+              formattedBanner =
+                id: banner.id,
+                path: banner.BannerPath,
+                type: banner.BannerType,
+                type2: banner.BannerType2,
+                language: banner.Language,
+                rating: banner.Rating,
+                ratingCount: banner.RatingCount
+
+              _.each keyMapping, (trgKey, srcKey) ->
+                srcValue = banner[srcKey]
+                formattedBanner[trgKey] = srcValue if srcValue
+
+              formattedBanners.push formattedBanner
+
+            formattedResult['banners'] = formattedBanners
+
+          if result.Series?
+            formattedResult['tvShow'] = self.formatTvShow result.Series
+
+          if result.Episode?
+            formattedEpisodes = []
+
+            episodes = if _.isArray result.Episode then result.Episode else [result.Episode]
+            episodes.forEach (episode) ->
+              formattedEpisodes.push self.formatEpisode episode
+
+            formattedResult['episodes'] = formattedEpisodes
+
+      done undefined, formattedResult
 
 
+  # Retrieves basic information for a specific TV Show.
+  #
+  # The callback `done`gets invoked with `err` and `info.
+  #
+  # `info` contains an object with tv show information.
+  getInfoTvShow: (tvShowId, done, language) ->
+    options = { language: 'en', seriesId: tvShowId }
+    options.language = language if language?
+    self = this
+
+    @get path: this.getPath("getInfoTvShow", options), (err, files) ->
+      return done err if err?
+
+      done undefined, self.formatTvShow files.Series
+
+
+  # Retrieves basic information for a specific TV Show episode.
+  #
+  # The callback `done`gets invoked with `err` and `info.
+  #
+  # `info` contains an object with tv show episode information.
+  getInfoEpisode: (episodeId, done, language) ->
+    options = { language: 'en', episodesId: episodeId }
+    options.language = language if language?
+    self = this
+
+    @get path: this.getPath("getInfoEpisode", options), (err, files) ->
+      return done err if err?
+
+      done undefined, self.formatEpisode files.Episode
 
   # Unzips a zip buffer and returns an object with the filenames as keys and the data as values.
   unzip: (zipBuffer, done) ->
@@ -222,28 +336,101 @@ class TVDB
     done null, files
 
 
-  # Retrieves all information for a specific TV Show.
+  # Retrieves all updates based on parameter. Valid parameters are
+  #   - `day`
+  #   - `week`
+  #   - `month`
   #
-  # Not finished yet!
-  # 
-  # The callback `done` gets invoked with `err` and `info`.
-  # 
-  # `info` contains:
-  getInfo: (mirrorUrl, tvShowId, done, language) ->
-    options = { }
+  # The callback `done` gets invoked with `err` and `updates`.
+  #
+  # `updates` contains following objects:
+  #
+  #   - `updateInfo`
+  #   - `tvShows`
+  #   - `episodes`
+  #   - `banners`
+  getUpdates: (period, done) ->
+    if !(['day', 'week', 'month'].some (p) -> p == period)
+      return done new Error "Invalid period #{period}"
 
-    options.language = language if language?
+    options = { period: period }
 
-    @get path: this.getPath("getInfo", options), (err, files) ->
-      if err? then done(err); return
+    @get path: this.getPath("getUpdates", options), (err, files) ->
+      return done err if err?
 
-      # for filename, xml of files
-      #   console.log filename
+      formattedResult = {}
 
-      done undefined, files
+      _.each files, (xml) ->
+        xmlParser.parseString xml, (err, updates) ->
+          return done new Error "Invalid XML: #{err.message}" if err?
+
+          _.each updates, (update, key) ->
+            if key == "$"
+              formattedResult['updateInfo'] = update;
+
+            else if key == "Series"
+              formattedResult['tvShows'] = update;
+
+            else if key == "Episode"
+              formattedResult['episodes'] = [];
+
+              _.each update, (episode) ->
+                formattedResult['episodes'].push { id: episode.id, tvShowId: episode.Series, time: episode.time }
+
+            else if key == "Banner"
+              formattedResult['banners'] = [];
+
+              _.each update, (banner) ->
+                bannerInfo = {
+                  tvShowId: banner.Series,
+                  path: banner.path,
+                  time: banner.time,
+                  type: banner.type
+                }
+                bannerInfo.season = banner.SeasonNum if banner.SeasonNum?
+                bannerInfo.format = banner.format if banner.format?
+                bannerInfo.language = banner.language if banner.language?
+
+                formattedResult['banners'].push bannerInfo
+
+      done undefined, formattedResult
+
+  formatTvShow: (tvShow) ->
+    keyMapping = IMDB_ID: 'imdbId', zap2it_id: 'zap2itId', banner: 'banner', Overview: 'overview'
+    formattedTvShow =
+      id: tvShow.id,
+      genre: tvShow.Genre,
+      language: tvShow.Language,
+      name: tvShow.SeriesName
+
+    formattedTvShow.firstAired = new Date(tvShow.FirstAired) if tvShow.FirstAired?
+
+    _.each keyMapping, (trgKey, srcKey) ->
+      srcValue = tvShow[srcKey]
+      formattedTvShow[trgKey] = srcValue if srcValue
+
+    return formattedTvShow
 
 
+  formatEpisode: (episode) ->
+    keyMapping = Overview: 'overview', Rating: 'rating', RatingCount: 'ratingCount', Writer: 'writer'
 
+    formattedEpisode =
+      id: episode.id,
+      name: episode.EpisodeName,
+      number: episode.EpisodeNumber,
+      language: episode.Language,
+      season: episode.SeasonNumber
+      seasonId: episode.seasonid,
+      tvShowId: episode.seriesid
+
+    formattedEpisode.firstAired = new Date(episode.FirstAired) if episode.FirstAired?
+
+    _.each keyMapping, (trgKey, srcKey) ->
+      srcValue = episode[srcKey]
+      formattedEpisode[trgKey] = srcValue if srcValue
+
+    return formattedEpisode
 
 # Exposing TVDB
 # @type {TVDB}
