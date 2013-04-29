@@ -67,6 +67,7 @@ class TVDB
     getInfo: '/api/#{apiKey}/series/#{seriesId}/all/#{language}.zip'
     getInfoTvShow: '/api/#{apiKey}/series/#{seriesId}/#{language}.xml'
     getInfoEpisode: '/api/#{apiKey}/episodes/#{episodesId}/#{language}.xml'
+    getUpdates: '/api/#{apiKey}/updates/updates_#{period}.zip'
 
 
 
@@ -334,6 +335,65 @@ class TVDB
       files[file.name] = file.data
     done null, files
 
+
+  # Retrieves all updates based on parameter. Valid parameters are
+  #   - `day`
+  #   - `week`
+  #   - `month`
+  #
+  # The callback `done` gets invoked with `err` and `updates`.
+  #
+  # `updates` contains following objects:
+  #
+  #   - `updateInfo`
+  #   - `tvShows`
+  #   - `episodes`
+  #   - `banners`
+  getUpdates: (period, done) ->
+    if !(['day', 'week', 'month'].some (p) -> p == period)
+      return done new Error "Invalid period #{period}"
+
+    options = { period: period }
+
+    @get path: this.getPath("getUpdates", options), (err, files) ->
+      return done err if err?
+
+      formattedResult = {}
+
+      _.each files, (xml) ->
+        xmlParser.parseString xml, (err, updates) ->
+          return done new Error "Invalid XML: #{err.message}" if err?
+
+          _.each updates, (update, key) ->
+            if key == "$"
+              formattedResult['updateInfo'] = update;
+
+            else if key == "Series"
+              formattedResult['tvShows'] = update;
+
+            else if key == "Episode"
+              formattedResult['episodes'] = [];
+
+              _.each update, (episode) ->
+                formattedResult['episodes'].push { id: episode.id, tvShowId: episode.Series, time: episode.time }
+
+            else if key == "Banner"
+              formattedResult['banners'] = [];
+
+              _.each update, (banner) ->
+                bannerInfo = {
+                  tvShowId: banner.Series,
+                  path: banner.path,
+                  time: banner.time,
+                  type: banner.type
+                }
+                bannerInfo.season = banner.SeasonNum if banner.SeasonNum?
+                bannerInfo.format = banner.format if banner.format?
+                bannerInfo.language = banner.language if banner.language?
+
+                formattedResult['banners'].push bannerInfo
+
+      done undefined, formattedResult
 
   formatTvShow: (tvShow) ->
     keyMapping = IMDB_ID: 'imdbId', zap2it_id: 'zap2itId', banner: 'banner', Overview: 'overview'
