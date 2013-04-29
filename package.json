@@ -2,7 +2,7 @@
   "author": "Matias Meno <m@tias.me>",
   "name": "tvdb",
   "description": "A wrapper for thetvdb.coms XML API",
-  "version": "0.0.12-dev",
+  "version": "0.0.12",
   "website": "https://github.com/enyo/node-tvdb",
   "keywords": [ "thetvdb", "thetvdb.com", "xml", "api" ],
   "repository": {
