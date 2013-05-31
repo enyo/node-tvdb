@@ -422,7 +422,8 @@ class TVDB
       language: episode.Language,
       season: episode.SeasonNumber
       seasonId: episode.seasonid,
-      tvShowId: episode.seriesid
+      tvShowId: episode.seriesid,
+      lastUpdated: episode.lastupdated
 
     formattedEpisode.firstAired = new Date(episode.FirstAired) if episode.FirstAired?
 
