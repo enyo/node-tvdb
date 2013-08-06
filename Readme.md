@@ -1,4 +1,4 @@
-# TheTVDB.com Node library Version 0.0.13
+# TheTVDB.com Node library Version 0.0.14-dev
 
 
 ![Build status](https://travis-ci.org/enyo/node-tvdb.png?branch=master) (Master)  
