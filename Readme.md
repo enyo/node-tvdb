@@ -1,4 +1,4 @@
-# TheTVDB.com Node library Version 0.0.12
+# TheTVDB.com Node library Version 0.0.13
 
 
 ![Build status](https://travis-ci.org/enyo/node-tvdb.png?branch=master) (Master)  
@@ -136,5 +136,6 @@ and following optional values:
   - `zap2itId` {String}
   - `banner` {String}
   - `overview` {String}
+
 
 

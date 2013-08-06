@@ -240,7 +240,7 @@ describe "tvdb", ->
       dataFileUri = __dirname + "/data/episodes.single.xml"
       tvdb.getInfoEpisode "id", (err, episode) ->
         episode.id.should.equal "3954591"
-        Object.getOwnPropertyNames(episode).length.should.equal 11
+        Object.getOwnPropertyNames(episode).length.should.equal 12
         done()
 
   describe "getUpdates()", ->
