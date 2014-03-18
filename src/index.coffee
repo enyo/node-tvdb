@@ -115,7 +115,7 @@ class TVDB
 
         switch contentType
           when "text/xml", "application/xml"
-            xmlParser.parseString dataBuffer.toString(), (err, result) ->
+            xmlParser.parseString dataBuffer.toString().replace(/<BR>/g,'\n'), (err, result) ->
               err = new Error "Invalid XML: #{err.message}" if err?
               callback err, result
 
