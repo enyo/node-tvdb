@@ -18,13 +18,13 @@
     "node": ">=0.6.x <0.9"
   },
   "dependencies": {
-    "xml2js": "0.x",
+    "xml2js": "0.2.x",
     "underscore": "1.x",
     "adm-zip": "0.4.x"
   },
   "devDependencies": {
     "mocha": "1.x",
-    "coffee-script": "1.x",
+    "coffee-script": "1.6.x",
     "should": "0.x"
   }
 }

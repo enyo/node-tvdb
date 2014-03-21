@@ -397,7 +397,8 @@ class TVDB
       done undefined, formattedResult
 
   formatTvShow: (tvShow) ->
-    keyMapping = IMDB_ID: 'imdbId', zap2it_id: 'zap2itId', banner: 'banner', Overview: 'overview'
+    keyMapping = IMDB_ID: 'imdbId', zap2it_id: 'zap2itId', banner: 'banner', Overview: 'overview', Airs_DayOfWeek: 'airDay', Airs_Time: 'airTime',
+    Runtime: 'runtime', Status: 'status'
     formattedTvShow =
       id: tvShow.id,
       genre: tvShow.Genre,
