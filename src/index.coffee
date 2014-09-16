@@ -197,7 +197,7 @@ class TVDB
 
       if tvShows?.Series?
         tvShows = if _.isArray tvShows.Series then tvShows.Series else [tvShows.Series]
-        keyMapping = IMDB_ID: 'imdbId', zap2it_id: 'zap2itId', banner: 'banner', Overview: 'overview'
+        keyMapping = IMDB_ID: 'imdbId', zap2it_id: 'zap2itId', banner: 'banner', Network: 'network', Overview: 'overview'
 
         tvShows.forEach (tvShow) ->
           formattedTvShow =
@@ -401,6 +401,7 @@ class TVDB
     formattedTvShow =
       id: tvShow.id,
       genre: tvShow.Genre,
+      network: tvShow.Network,
       language: tvShow.Language,
       name: tvShow.SeriesName
 
