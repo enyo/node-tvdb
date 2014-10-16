@@ -209,6 +209,7 @@ describe "tvdb", ->
         info.actors.should.exist
         info.tvShow.name.should.equal "Dexter"
         info.tvShow.id.should.equal "79349"
+        info.tvShow.poster.should.exist
         info.episodes[0].name.should.equal "Early Cuts: Alex Timmons (Chapter 1)"
         info.episodes[0].id.should.equal "1285811"
         info.banners[0].id.should.equal "30362"
@@ -227,7 +228,7 @@ describe "tvdb", ->
       dataFileUri = __dirname + "/data/series.single.xml"
       tvdb.getInfoTvShow "id", (err, tvShow) ->
         tvShow.id.should.equal "70327"
-        Object.getOwnPropertyNames(tvShow).length.should.equal 11
+        Object.getOwnPropertyNames(tvShow).length.should.equal 12
         done()
 
   describe "getInfoEpisode()", ->
