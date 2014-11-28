@@ -70,7 +70,6 @@ class TVDB
     getUpdates: '/api/#{apiKey}/updates/updates_#{period}.zip'
 
 
-
   # Returns the path and inserts api key and language if necessary.
   getPath: (pathName, values) ->
     path = @paths[pathName]
@@ -427,6 +426,7 @@ class TVDB
       seasonId: episode.seasonid,
       tvShowId: episode.seriesid,
       lastUpdated: episode.lastupdated
+      image: episode.filename
 
     formattedEpisode.firstAired = new Date(episode.FirstAired) if episode.FirstAired?
 
