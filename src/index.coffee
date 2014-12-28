@@ -21,8 +21,9 @@ http = require "http"
 _ = require "underscore"
 querystring = require "querystring"
 fs = require "fs"
-Zip = require 'adm-zip'
-
+Zip = require "adm-zip"
+keymap = require "./keymap.json"
+Q = require "q"
 
 # Class definition
 class TVDB
@@ -81,8 +82,9 @@ class TVDB
 
 
   # Shortcut for http.get
-  get: (options, callback) ->
+  get: (options) ->
     options = _.extend({ host: this.options.initialHost, port: this.options.port }, options)
+    deferred = Q.defer()
 
     if options.pathName?
       options.path = @getPath options.pathName
@@ -90,7 +92,7 @@ class TVDB
 
     http.get options, (res) =>
       unless 100 <= res.statusCode < 300
-        callback new Error("Status: #{res.statusCode}")
+        deferred.reject new Error("Status: #{res.statusCode}")
         return
 
       contentType = res.headers['content-type'];
@@ -115,18 +117,24 @@ class TVDB
         switch contentType
           when "text/xml", "application/xml"
             xmlParser.parseString dataBuffer.toString(), (err, result) ->
-              err = new Error "Invalid XML: #{err.message}" if err?
-              callback err, result
+              if err?
+                deferred.reject new Error("Invalid XML: #{err.message}")
+              else
+                deferred.resolve result
 
           when "application/zip"
             @unzip dataBuffer, (err, result) ->
-              err = new Error "Invalid XML: #{err.message}" if err?
-              callback err, result
+              if err?
+                deferred.reject new Error("Invalid XML: #{err.message}")
+              else
+                deferred.resolve result
 
           else
-            callback null, dataBuffer.toString()
+            deferred.resolve dataBuffer.toString()
 
-    .on "error", (e) -> callback e
+    .on "error", (e) -> deferred.reject new Error(e)
+
+    return deferred.promise
 
 
   # Calls `done` with `err` if an error occured, and an array containing a list of languages.
@@ -136,11 +144,10 @@ class TVDB
   #   - `id` String
   #   - `name` String
   #   - `abbreviation` String
-  getLanguages: (done) ->
-    @get pathName: "languages", (err, response) ->
-      if err? then done(err); return
-      languages = if _.isArray(response.Language) then response.Language else [response.Language]
-      done undefined, languages
+  getLanguages: ->
+    return @get(pathName: "languages")
+    .then (response) ->
+      return if _.isArray(response.Language) then response.Language else [response.Language]
 
 
   # Calls `done` with `err` if an error occured, and an array containing a list of mirrors.
@@ -150,10 +157,9 @@ class TVDB
   #   - `id` String
   #   - `url` String
   #   - `types` Array containing at least one of `xml`, `banner` and `zip`.
-  getMirrors: (done) ->
-    @get pathName: "mirrors", (err, response) ->
-      if err? then done(err); return
-
+  getMirrors: ->
+    @get(pathName: "mirrors")
+    .then (response) ->
       mirrors = if _.isArray(response.Mirror) then response.Mirror else [response.Mirror]
       masks = xml: 1, banner: 2, zip: 4
       formattedMirrors = []
@@ -169,14 +175,14 @@ class TVDB
 
         formattedMirrors.push formattedMirror
 
-      done undefined, formattedMirrors
+      return formattedMirrors
 
 
   # Gets the server timestamp
-  getServerTime: (done) ->
-    @get pathName: "serverTime", (err, response) ->
-      if err? then done(err); return
-      done undefined, parseInt(response.Time, 10)
+  getServerTime: ->
+    @get(pathName: "serverTime")
+    .then (response) ->
+      return parseInt(response.Time, 10)
 
 
   # Finds a tv show by its name.
@@ -188,10 +194,9 @@ class TVDB
   #   - `id`
   #   - `language`
   #   - `name`
-  findTvShow: (name, done) ->
-    @get path: this.getPath("findTvShow", name: name), (err, tvShows) ->
-      return done err if err?
-
+  findTvShow: (name) ->
+    @get(path: this.getPath("findTvShow", name: name))
+    .then (tvShows) ->
       formattedTvShows = [ ]
 
       if tvShows?.Series?
@@ -212,7 +217,7 @@ class TVDB
 
           formattedTvShows.push formattedTvShow
 
-      done undefined, formattedTvShows
+      return formattedTvShows
 
 
   # Retrieves all information for a specific TV Show.
@@ -225,19 +230,18 @@ class TVDB
   #   - `episodes`
   #   - `actors`
   #   - `banners`
-  getInfo: (tvShowId, done, language) ->
+  getInfo: (tvShowId, language) ->
     options = { language: 'en', seriesId: tvShowId }
     options.language = language if language?
     self = this
 
-    @get path: this.getPath("getInfo", options), (err, files) ->
-      return done err if err?
-
+    @get(path: this.getPath("getInfo", options)) 
+    .then (files) ->
       formattedResult = { }
 
       for filename, xml of files
         xmlParser.parseString xml, (err, result) ->
-          return done new Error "Invalid XML: #{err.message}" if err?
+          return new Error "Invalid XML: #{err.message}" if err?
 
           if result.Actor?
             formattedActors = []
@@ -292,7 +296,7 @@ class TVDB
 
             formattedResult['episodes'] = formattedEpisodes
 
-      done undefined, formattedResult
+      return formattedResult
 
 
   # Retrieves basic information for a specific TV Show.
@@ -300,15 +304,14 @@ class TVDB
   # The callback `done`gets invoked with `err` and `info.
   #
   # `info` contains an object with tv show information.
-  getInfoTvShow: (tvShowId, done, language) ->
+  getInfoTvShow: (tvShowId, language) ->
     options = { language: 'en', seriesId: tvShowId }
     options.language = language if language?
     self = this
 
-    @get path: this.getPath("getInfoTvShow", options), (err, files) ->
-      return done err if err?
-
-      done undefined, self.formatTvShow files.Series
+    @get(path: this.getPath("getInfoTvShow", options))
+    .then (files) ->
+      return self.formatTvShow files.Series
 
 
   # Retrieves basic information for a specific TV Show episode.
@@ -316,15 +319,14 @@ class TVDB
   # The callback `done`gets invoked with `err` and `info.
   #
   # `info` contains an object with tv show episode information.
-  getInfoEpisode: (episodeId, done, language) ->
+  getInfoEpisode: (episodeId, language) ->
     options = { language: 'en', episodesId: episodeId }
     options.language = language if language?
     self = this
 
-    @get path: this.getPath("getInfoEpisode", options), (err, files) ->
-      return done err if err?
-
-      done undefined, self.formatEpisode files.Episode
+    @get(path: this.getPath("getInfoEpisode", options))
+    .then (files) ->
+      return self.formatEpisode files.Episode
 
   # Unzips a zip buffer and returns an object with the filenames as keys and the data as values.
   unzip: (zipBuffer, done) ->
@@ -349,20 +351,23 @@ class TVDB
   #   - `tvShows`
   #   - `episodes`
   #   - `banners`
-  getUpdates: (period, done) ->
+  getUpdates: (period) ->
     if !(['day', 'week', 'month'].some (p) -> p == period)
-      return done new Error "Invalid period #{period}"
+      deferred = Q.defer()
+
+      deferred.reject new Error "Invalid period #{period}"
+
+      return deferred.promise
 
     options = { period: period }
 
-    @get path: this.getPath("getUpdates", options), (err, files) ->
-      return done err if err?
-
+    @get(path: this.getPath("getUpdates", options))
+    .then (files) ->
       formattedResult = {}
 
       _.each files, (xml) ->
         xmlParser.parseString xml, (err, updates) ->
-          return done new Error "Invalid XML: #{err.message}" if err?
+          return new Error "Invalid XML: #{err.message}" if err?
 
           _.each updates, (update, key) ->
             if key == "$"
@@ -393,7 +398,7 @@ class TVDB
 
                 formattedResult['banners'].push bannerInfo
 
-      done undefined, formattedResult
+      return formattedResult
 
   formatTvShow: (tvShow) ->
     keyMapping = IMDB_ID: 'imdbId', zap2it_id: 'zap2itId', banner: 'banner', Overview: 'overview', Airs_DayOfWeek: 'airDay', Airs_Time: 'airTime',
