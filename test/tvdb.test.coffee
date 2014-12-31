@@ -81,21 +81,21 @@ describe "tvdb", ->
 
     it "should correctly use http to fetch the resource", (done) ->
       httpData = "blabla"
-      tvdb.get { }, (err, data) ->
+      tvdb.get({ }).then (data) ->
         data.should.eql "blabla"
         done()
         
     it "should parse the XML if the contentType was application/xml", (done) ->
       httpData = "<some><xml>test</xml></some>"
       contentType = "application/xml"
-      tvdb.get { }, (err, data) ->
+      tvdb.get({ }).then (data) ->
         data.should.eql { xml: "test" }
         done()
 
     it "should parse the XML if the contentType was text/xml", (done) ->
       httpData = "<some><xml>test</xml></some>"
       contentType = "text/xml"
-      tvdb.get { }, (err, data) ->
+      tvdb.get({ }).then (data) ->
         data.should.eql { xml: "test" }
         done()
 
@@ -113,7 +113,7 @@ describe "tvdb", ->
 
     it "should call the callback with error if the response was not valid", (done) ->
       statusCode = 404
-      tvdb.get { }, (err, data) ->
+      tvdb.get({ }).fail (err) ->
         err.should.be.instanceof Error
         err.message.should.eql "Status: 404"
         done()
@@ -121,7 +121,7 @@ describe "tvdb", ->
     it "should call the callback with error if the xml was invalid", (done) ->
       httpData = "invalid xml"
       contentType = "application/xml"
-      tvdb.get { }, (err, data) ->
+      tvdb.get({ }).fail (err) ->
         err.should.be.instanceof Error
         err.message.indexOf("Invalid XML").should.equal 0
         done()
@@ -129,7 +129,7 @@ describe "tvdb", ->
     it "should unzip zip files directly", (done) ->
       httpData = fs.readFileSync "#{__dirname}/data/test.zip"
       contentType = "application/zip"
-      tvdb.get { }, (err, data) ->
+      tvdb.get({ }).then (data) ->
         data.should.not.be.instanceof Buffer
         data["test.txt"].should.eql "test content"
         done()

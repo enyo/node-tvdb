@@ -3,11 +3,16 @@ fs = require "fs"
 _ = require "underscore"
 xmlParser = new (require("xml2js")).Parser()
 http = require "http"
+Q = require "q"
 
 describe "tvdb", ->
   tvdbWithError = new TVDB apiKey: "12"
-  tvdbWithError.get = (opts, callback) ->
-    callback new Error "test error"
+  tvdbWithError.get = (opts) ->
+    deferred = Q.defer()
+
+    deferred.reject new Error "test error"
+
+    return deferred.promise
 
   options = apiKey: "1234abc"
 
@@ -40,14 +45,14 @@ describe "tvdb", ->
 
   describe "getMirrors()", ->
     it "should call the callback with error", (done) ->
-      tvdbWithError.getMirrors (err, mirrors) ->
+      tvdbWithError.getMirrors().fail (err) ->
         err.should.be.instanceof Error
         err.message.should.equal "test error"
         done()
 
     it "should return a valid list if only one mirror", (done) ->
       dataFileUri = __dirname + "/data/mirrors.single.xml"
-      tvdb.getMirrors (err, mirrors) ->
+      tvdb.getMirrors().then (mirrors) ->
         mirrors.should.eql [
           id: "1"
           url: "http://thetvdb.com"
@@ -57,7 +62,7 @@ describe "tvdb", ->
 
     it "should return a valid list if multiple mirrors", (done) ->
       dataFileUri = __dirname + "/data/mirrors.multiple.xml"
-      tvdb.getMirrors (err, mirrors) ->
+      tvdb.getMirrors().then (mirrors) ->
         mirrors.length.should.equal 7
         ids = []
         _.each mirrors, (mirror) ->
@@ -90,14 +95,14 @@ describe "tvdb", ->
 
   describe "getLanguages()", ->
     it "should call the callback with error", (done) ->
-      tvdbWithError.getMirrors (err, mirrors) ->
+      tvdbWithError.getMirrors().fail (err) ->
         err.should.be.instanceof Error
         err.message.should.equal "test error"
         done()
 
     it "should return a valid list if only one language", (done) ->
       dataFileUri = __dirname + "/data/languages.single.xml"
-      tvdb.getLanguages (err, languages) ->
+      tvdb.getLanguages().then (languages) ->
         languages.should.eql [
           id: "17"
           name: "Français"
@@ -107,7 +112,7 @@ describe "tvdb", ->
 
     it "should return a valid list if multiple languages", (done) ->
       dataFileUri = __dirname + "/data/languages.multiple.xml"
-      tvdb.getLanguages (err, languages) ->
+      tvdb.getLanguages().then (languages) ->
         languages.length.should.equal 23
         _.each languages, (language) ->
           language.id.should.be.a("string").and.not.be.empty
@@ -118,36 +123,40 @@ describe "tvdb", ->
 
   describe "getServerTime()", ->
     it "should call the callback with error", (done) ->
-      tvdbWithError.getServerTime (err, mirrors) ->
+      tvdbWithError.getServerTime().fail (err) ->
         err.should.be.instanceof Error
         err.message.should.equal "test error"
         done()
 
     it "should return the server time correctly", (done) ->
       dataFileUri = __dirname + "/data/server_time.xml"
-      tvdb.getServerTime (err, time) ->
+      tvdb.getServerTime().then (time) ->
         time.should.be.a("number").and.equal 1334162822
         done()
 
   describe "findTvShow()", ->
     it "should call the callback with error", (done) ->
-      tvdbWithError.findTvShow "test name", (err, mirrors) ->
+      tvdbWithError.findTvShow("test name").fail (err) ->
         err.should.be.instanceof Error
         err.message.should.equal "test error"
         done()
 
     it "should use the right path", (done) ->
       localTvdb = new TVDB apiKey: "1234abc"
-      localTvdb.get = (opts, callback) ->
-        opts.path.indexOf("seriesname=abc%26%20c").should.not.equal -1
-        done()
+      localTvdb.get = (opts) ->
+        deferred = Q.defer()
 
-      localTvdb.findTvShow "abc& c", (err, time) ->
+        opts.path.indexOf("seriesname=abc%26%20c").should.not.equal -1
+
+        done()
+        return deferred.promise
+
+      localTvdb.findTvShow "abc& c"
 
     it "should return a valid list if only one tv show", (done) ->
       dataFileUri = __dirname + "/data/find_tv_show.single.xml"
 
-      tvdb.findTvShow "dexter", (err, tvShows) ->
+      tvdb.findTvShow("dexter").then (tvShows) ->
         data =
           id: "79349"
           language: "en"
@@ -167,7 +176,7 @@ describe "tvdb", ->
 
     it "should return a valid list if only one tv show with very little information", (done) ->
       dataFileUri = __dirname + "/data/find_tv_show.naked.xml"
-      tvdb.findTvShow "dexter", (err, tvShows) ->
+      tvdb.findTvShow("dexter").then ( tvShows) ->
         tvShows.length.should.equal 1
         tvShows[0].should.eql
           id: "79349"
@@ -178,7 +187,7 @@ describe "tvdb", ->
 
     it "should return a valid list if multiple tv shows", (done) ->
       dataFileUri = __dirname + "/data/find_tv_show.multiple.xml"
-      tvdb.findTvShow "dexter", (err, tvShows) ->
+      tvdb.findTvShow("dexter").then (tvShows) ->
         tvShows.length.should.equal 2
         tvShows[0].name.should.equal "Dexter"
         tvShows[0].id.should.equal "79349"
@@ -188,21 +197,23 @@ describe "tvdb", ->
 
     it "should return a valid list if no tv show was found", (done) ->
       dataFileUri = __dirname + "/data/no_data.xml"
-      tvdb.findTvShow "dexter", (err, tvShows) ->
-        (err == undefined).should.be.ok
+      tvdb.findTvShow("dexter").then (tvShows) ->
         tvShows.length.should.equal 0
+        done()
+      .fail (err) ->
+        (err == undefined).should.be.ok
         done()
 
   describe "getInfo()", ->
     it "should call the callback with error", (done) ->
-      tvdbWithError.getInfo "id", (err, mirrors) ->
+      tvdbWithError.getInfo("id").fail (err) ->
         err.should.be.instanceof Error
         err.message.should.equal "test error"
         done()
     it "should return a valid object containing Json objects", (done) ->
       contentType = "application/zip"
       dataFileUri = __dirname + "/data/dexter.en.zip"
-      tvdb.getInfo "id", (err, info) ->
+      tvdb.getInfo("id").then (info) ->
         info.tvShow.should.exist
         info.episodes.should.exist
         info.banners.should.exist
@@ -219,41 +230,41 @@ describe "tvdb", ->
 
   describe "getInfoTvShow()", ->
     it "should call the callback with error", (done) ->
-      tvdbWithError.getInfoTvShow "id", (err, tvShow) ->
+      tvdbWithError.getInfoTvShow("id").fail (err) ->
         err.should.be.instanceof Error
         err.message.should.equal "test error"
         done()
     it "should return a valid object containing Json data", (done) ->
       contentType = "text/xml"
       dataFileUri = __dirname + "/data/series.single.xml"
-      tvdb.getInfoTvShow "id", (err, tvShow) ->
+      tvdb.getInfoTvShow("id").then (tvShow) ->
         tvShow.id.should.equal "70327"
         Object.getOwnPropertyNames(tvShow).length.should.equal 12
         done()
 
   describe "getInfoEpisode()", ->
     it "should call the callback with error", (done) ->
-      tvdbWithError.getInfoEpisode "id", (err, episode) ->
+      tvdbWithError.getInfoEpisode("id").fail (err) ->
         err.should.be.instanceof Error
         err.message.should.equal "test error"
         done()
     it "should return a valid object containing Json data", (done) ->
       dataFileUri = __dirname + "/data/episodes.single.xml"
-      tvdb.getInfoEpisode "id", (err, episode) ->
+      tvdb.getInfoEpisode("id").then (episode) ->
         episode.id.should.equal "3954591"
         Object.getOwnPropertyNames(episode).length.should.equal 13
         done()
 
   describe "getUpdates()", ->
     it "should call the callback with error", (done) ->
-      tvdbWithError.getUpdates 'day', (err, files) ->
+      tvdbWithError.getUpdates('day').fail (err) ->
         err.should.be.instanceof Error
         err.message.should.equal "test error"
         done()
     it "should return a valid object containing Json objects", (done) ->
       contentType = "application/zip"
       dataFileUri = __dirname + "/data/updates_day.zip"
-      tvdb.getUpdates 'day', (err, updates) ->
+      tvdb.getUpdates('day').then (updates) ->
         updates.updateInfo.should.exist
         updates.tvShows.should.exist
         updates.episodes.should.exist
@@ -264,19 +275,28 @@ describe "tvdb", ->
         updates.banners[0].path.should.equal "posters/266443-1.jpg"
         done()
     it "should not allow a non-valid period", (done) ->
-      tvdb.getUpdates "weekly", (err, updates) ->
+      tvdb.getUpdates("weekly").fail (err) ->
         err.should.be.instanceof Error
         err.message.should.equal "Invalid period weekly"
         done()
     it "should use different path depending on period", (done) ->
       localTvdb = new TVDB apiKey: "12"
       localTvdb.get = (opts) ->
+        deferred = Q.defer()
         opts.path.should.equal "/api/12/updates/updates_day.zip"
+
+        return deferred.promise
       localTvdb.getUpdates 'day', (err, updates) ->
       localTvdb.get = (opts) ->
+        deferred = Q.defer()
         opts.path.should.equal "/api/12/updates/updates_week.zip"
+
+        return deferred.promise
       localTvdb.getUpdates 'week', (err, updates) ->
       localTvdb.get = (opts) ->
+        deferred = Q.defer()
         opts.path.should.equal "/api/12/updates/updates_month.zip"
+
         done()
+        return deferred.promise
       localTvdb.getUpdates 'month', (err, updates) ->
