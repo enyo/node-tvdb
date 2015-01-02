@@ -1,0 +1,124 @@
+{
+	"actor": {
+		"id": "id",
+		"Image": "image",
+		"Name": "name",
+		"Role": "role",
+		"SortOrder": "sortOrder"
+	},
+	"banner": {
+		"id": "id",
+		"BannerPath": "bannerPath",
+		"ThumbnailPath": "thumbnailPath",
+		"VignettePath": "vignettePath",
+		"BannerType": "bannerType",
+		"BannerType2": "bannerType2",
+		"Language": "language",
+		"Season": "season",
+		"Rating": "rating",
+		"RatingCount": "ratingCount",
+		"SeriesName": "seriesName",
+		"Colors": "colors"
+	},
+	"episode": {
+		"id": "id",
+		"Combined_episodenumber": "combinedEpisodeNumber",
+		"Combined_season": "combinedSeason",
+		"DVD_chapter": "dvdChapter",
+		"DVD_discid": "dvdDiscId",
+		"DVD_episodenumber": "dvdEpisodeNumber",
+		"DVD_season": "dvdSeason",
+		"Director": "director",
+		"EpImgFlag": "epImgFlag",
+		"EpisodeName": "episodeName",
+		"EpisodeNumber": "episodeNumber",
+		"FirstAired": "firstAired",
+		"GuestStars": "guestStars",
+		"IMDB_ID": "imdbId",
+		"Language": "language",
+		"Overview": "overview",
+		"ProductionCode": "productionCode",
+		"Rating": "rating",
+		"RatingCount": "ratingCount",
+		"SeasonNumber": "seasonNumber",
+		"Writer": "writer",
+		"absolute_number": "absoluteNumber",
+		"airsafter_season": "airsAfterSeason",
+		"airsbefore_episode": "airsBeforeEpisode",
+		"airsbefore_season": "airsBeforeSeason",
+		"filename": "fileName",
+		"flagged": "flagged",
+		"lastupdated": "lastUpdated",
+		"mirrorupdate": "mirrorUpdate",
+		"seasonid": "seasonId",
+		"seriesid": "seriesId",
+		"thumb_added": "thumbAdded",
+		"thumb_height": "thumbHeight",
+		"thumb_width": "thumbWidth"
+	},
+	"series": {
+		"id": "id",
+		"Actors": "actors",
+		"Airs_DayOfWeek": "airsDayOfWeek",
+		"Airs_Time": "airsTime",
+		"ContentRating": "contentRating",
+		"FirstAired": "firstAired",
+		"Genre": "genre",
+		"IMDB_ID": "imdbId",
+		"Language": "language",
+		"Network": "network",
+		"NetworkID": "networkId",
+		"Overview": "overview",
+		"Rating": "rating",
+		"RatingCount": "ratingCount",
+		"Runtime": "runtime",
+		"SeriesID": "seriesId",
+		"SeriesName": "seriesName",
+		"Status": "status",
+		"added": "added",
+		"addedBy": "addedBy",
+		"banner": "banner",
+		"fanart": "fanart",
+		"lastupdated": "lastUpdated",
+		"poster": "poster",
+		"zap2it_id": "zap2itId"
+	},
+	"update":
+	{
+
+		"banner":
+		{
+			"Series": "series",
+			"format": "format",
+			"language": "language",
+			"path": "path",
+			"time": "time",
+			"type": "type"
+		},
+		"episode":
+		{
+			"id": "id",
+			"Series": "series",
+			"time": "time"
+		},
+		"series": 
+		{
+			"id": "id",
+			"time": "time"
+		}
+	},
+	"getSeries":
+	{
+		"id": "id",
+		"seriesid": "seriesId",
+		"language": "language",
+		"SeriesName": "seriesName",
+		"AliasNames": "aliasName",
+		"banner": "banner",
+		"Overview": "overview",
+		"FirstAired": "firstAired",
+		"IMDB_ID": "imdbId",
+		"zap2it_id": "zap2itId",
+		"Network": "network"
+	}
+}

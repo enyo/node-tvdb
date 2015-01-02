@@ -1,180 +1,712 @@
-<!DOCTYPE html>  <html> <head>   <title>index.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               index.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>Copyright(c) 2012 Matias Meno <a href="&#109;&#x61;&#x69;&#x6C;&#x74;&#111;:&#x6D;&#64;&#x74;&#x69;&#97;&#x73;&#x2E;&#109;e">&#x6D;&#64;&#x74;&#x69;&#97;&#x73;&#x2E;&#109;e</a></p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <h3>TheTVDB.com Node library</h3>
+<!DOCTYPE html>
 
-<p>It's a wrapper for <a href="http://www.thetvdb.com/">thetvdb</a>s XML API, written in <a href="http://coffeescript.org/">CoffeeScript</a> for <a href="http://nodejs.org/">node</a>.
-You won't be in contact with any XML if you use this library.</p>
+<html>
+<head>
+  <title>index.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>index.coffee</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>Copyright(c) 2012 Matias Meno <a href="&#x6d;&#x61;&#x69;&#108;&#116;&#111;&#x3a;&#x6d;&#x40;&#116;&#x69;&#x61;&#115;&#x2e;&#109;&#x65;">&#x6d;&#x40;&#116;&#x69;&#x61;&#115;&#x2e;&#109;&#x65;</a></p>
 
-<p>Please refere to the <code>Readme</code> for a more complete documentation.</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <h3>Lets see the code!</h3>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Dependencies</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">xmlParser = </span><span class="k">new</span> <span class="p">(</span><span class="nx">require</span> <span class="s2">&quot;xml2js&quot;</span><span class="p">).</span><span class="nx">Parser</span><span class="p">()</span>
-<span class="nv">http = </span><span class="nx">require</span> <span class="s2">&quot;http&quot;</span>
-<span class="nv">_ = </span><span class="nx">require</span> <span class="s2">&quot;underscore&quot;</span>
-<span class="nv">querystring = </span><span class="nx">require</span> <span class="s2">&quot;querystring&quot;</span>
-<span class="nv">fs = </span><span class="nx">require</span> <span class="s2">&quot;fs&quot;</span>
-<span class="nv">Zip = </span><span class="nx">require</span> <span class="s1">&#39;node-zip&#39;</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Class definition</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">TVDB</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>The default options you can override by passing an options object in the constructor.</p>
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h3 id="thetvdb-com-node-library">TheTVDB.com Node library</h3>
+<p>It’s a wrapper for <a href="http://www.thetvdb.com/">thetvdb</a>s XML API, written in <a href="http://coffeescript.org/">CoffeeScript</a> for <a href="http://nodejs.org/">node</a>.
+You won’t be in contact with any XML if you use this library.</p>
+<p>Please refere to the <code>Readme</code> for a more complete documentation.</p>
 
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h3 id="lets-see-the-code-">Lets see the code!</h3>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Dependencies</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>xmlParser = <span class="hljs-keyword">new</span> (<span class="hljs-built_in">require</span> <span class="hljs-string">"xml2js"</span>).Parser <span class="hljs-attribute">explicitRoot</span>: <span class="hljs-literal">no</span>, <span class="hljs-attribute">explicitArray</span>: <span class="hljs-literal">no</span>
+http = <span class="hljs-built_in">require</span> <span class="hljs-string">"http"</span>
+_ = <span class="hljs-built_in">require</span> <span class="hljs-string">"underscore"</span>
+querystring = <span class="hljs-built_in">require</span> <span class="hljs-string">"querystring"</span>
+fs = <span class="hljs-built_in">require</span> <span class="hljs-string">"fs"</span>
+Zip = <span class="hljs-built_in">require</span> <span class="hljs-string">"adm-zip"</span>
+keymap = <span class="hljs-built_in">require</span> <span class="hljs-string">"./keymap.json"</span>
+Q = <span class="hljs-built_in">require</span> <span class="hljs-string">"q"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Class definition</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TVDB</span></span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>The default options you can override by passing an options object in the constructor.</p>
 <ul>
 <li><code>apiKey</code> String</li>
-<li><code>language</code> String (optional) Default: 'en' You can set this later, with setLanguage(). Use
-                  getLanguages() to get a list of languages, and use the abbreviation.</li>
+<li><code>language</code> String (optional) Default: ‘en’ You can set this later, with setLanguage(). Use<pre><code>              getLanguages() to get a list <span class="hljs-keyword">of</span> languages, <span class="hljs-keyword">and</span> use the abbreviation.
+</code></pre></li>
 <li><code>initialHost</code> String (optional) Default: <code>thetvdb.com</code></li>
 <li><code>port</code> Number (optional) Default: 80</li>
-</ul>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">defaultOptions = </span>
-    <span class="nv">apiKey: </span><span class="kc">null</span>
-    <span class="nv">language: </span><span class="s2">&quot;en&quot;</span>
-    <span class="nv">initialHost: </span><span class="s2">&quot;thetvdb.com&quot;</span>
-    <span class="nv">port: </span><span class="mi">80</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>See <code>defaultOptions</code> for available options.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">constructor: </span><span class="nf">(options) -&gt;</span>
-    <span class="vi">@options = </span><span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">defaultOptions</span><span class="p">),</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{</span> <span class="p">})</span>
-    <span class="nx">unless</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">apiKey</span> <span class="k">then</span> <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span> <span class="s2">&quot;You have to provide an API key.&quot;</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Sets the language option.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">setLanguage: </span><span class="nf">(abbreviation) -&gt;</span>
-    <span class="vi">@options.language = </span><span class="nx">abbreviation</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>A list of thetvdb.com paths.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">paths:</span>
-    <span class="nv">mirrors: </span><span class="s1">&#39;/api/#{apiKey}/mirrors.xml&#39;</span>
-    <span class="nv">languages: </span><span class="s1">&#39;/api/#{apiKey}/languages.xml&#39;</span>
-    <span class="nv">serverTime: </span><span class="s1">&#39;/api/Updates.php?type=none&#39;</span>
-    <span class="nv">findTvShow: </span><span class="s1">&#39;/api/GetSeries.php?seriesname=#{name}&amp;language=#{language}&#39;</span>
-    <span class="nv">getInfo: </span><span class="s1">&#39;/api/#{apiKey}/series/#{seriesId}/all/#{language}.zip&#39;</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>Returns the path and inserts api key and language if necessary.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">getPath: </span><span class="nf">(pathName, values) -&gt;</span>
-    <span class="nv">path = </span><span class="nx">@paths</span><span class="p">[</span><span class="nx">pathName</span><span class="p">]</span>
+</ul>
 
-    <span class="nx">_</span><span class="p">.</span><span class="nx">each</span> <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span> <span class="p">},</span> <span class="nx">@options</span><span class="p">,</span> <span class="nx">values</span><span class="p">),</span> <span class="nf">(value, key) -&gt;</span>
-      <span class="nv">path = </span><span class="nx">path</span><span class="p">.</span><span class="nx">replace</span> <span class="s1">&#39;#{&#39;</span> <span class="o">+</span> <span class="nx">key</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span><span class="p">,</span> <span class="nx">querystring</span><span class="p">.</span><span class="nx">escape</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  defaultOptions =
+    <span class="hljs-attribute">apiKey</span>: <span class="hljs-literal">null</span>
+    <span class="hljs-attribute">language</span>: <span class="hljs-string">"en"</span>
+    <span class="hljs-attribute">initialHost</span>: <span class="hljs-string">"thetvdb.com"</span>
+    <span class="hljs-attribute">port</span>: <span class="hljs-number">80</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>See <code>defaultOptions</code> for available options.</p>
 
-    <span class="k">return</span> <span class="nx">path</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>Shortcut for http.get</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">get: </span><span class="nf">(options, callback) -&gt;</span>
-    <span class="nv">options = </span><span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span> <span class="nv">host: </span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">initialHost</span><span class="p">,</span> <span class="nv">port: </span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">port</span> <span class="p">},</span> <span class="nx">options</span><span class="p">)</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(options)</span> -&gt;</span>
+    <span class="hljs-property">@options</span> = _.extend(_.clone(defaultOptions), options || { })
+    <span class="hljs-keyword">unless</span> <span class="hljs-keyword">this</span>.options.apiKey <span class="hljs-keyword">then</span> <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"You have to provide an API key."</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Sets the language option.</p>
 
-    <span class="k">if</span> <span class="nx">options</span><span class="p">.</span><span class="nx">pathName</span><span class="o">?</span>
-      <span class="nv">options.path = </span><span class="nx">@getPath</span> <span class="nx">options</span><span class="p">.</span><span class="nx">pathName</span>
-      <span class="k">delete</span> <span class="nx">options</span><span class="p">.</span><span class="nx">pathName</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">setLanguage</span>: <span class="hljs-function"><span class="hljs-params">(abbreviation)</span> -&gt;</span>
+    <span class="hljs-property">@options</span>.language = abbreviation</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Sets the mirrorUrl option.</p>
 
-    <span class="nx">http</span><span class="p">.</span><span class="nx">get</span> <span class="nx">options</span><span class="p">,</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span>
-      <span class="nx">unless</span> <span class="mi">100</span> <span class="o">&lt;=</span> <span class="nx">res</span><span class="p">.</span><span class="nx">statusCode</span> <span class="o">&lt;</span> <span class="mi">300</span>
-        <span class="nx">callback</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;Status: #{res.statusCode}&quot;</span><span class="p">)</span>
-        <span class="k">return</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">setMirror</span>: <span class="hljs-function"><span class="hljs-params">(host, port)</span> -&gt;</span>
+    <span class="hljs-property">@options</span>.initialHost = host <span class="hljs-keyword">if</span> host?
+    <span class="hljs-property">@options</span>.port = port <span class="hljs-keyword">if</span> port?</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>A list of thetvdb.com paths.</p>
 
-      <span class="nv">contentType = </span><span class="nx">res</span><span class="p">.</span><span class="nx">getHeader</span> <span class="s2">&quot;content-type&quot;</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">paths</span>:
+    <span class="hljs-attribute">mirrors</span>: <span class="hljs-string">'/api/#{apiKey}/mirrors.xml'</span>
+    <span class="hljs-attribute">languages</span>: <span class="hljs-string">'/api/#{apiKey}/languages.xml'</span>
+    <span class="hljs-attribute">serverTime</span>: <span class="hljs-string">'/api/Updates.php?type=none'</span>
+    <span class="hljs-attribute">findTvShow</span>: <span class="hljs-string">'/api/GetSeries.php?seriesname=#{name}&amp;language=#{language}'</span>
+    <span class="hljs-attribute">getInfo</span>: <span class="hljs-string">'/api/#{apiKey}/series/#{seriesId}/all/#{language}.zip'</span>
+    <span class="hljs-attribute">getInfoTvShow</span>: <span class="hljs-string">'/api/#{apiKey}/series/#{seriesId}/#{language}.xml'</span>
+    <span class="hljs-attribute">getInfoEpisode</span>: <span class="hljs-string">'/api/#{apiKey}/episodes/#{episodesId}/#{language}.xml'</span>
+    <span class="hljs-attribute">getUpdates</span>: <span class="hljs-string">'/api/#{apiKey}/updates/updates_#{period}.zip'</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Returns the path and inserts api key and language if necessary.</p>
 
-      <span class="nv">dataBuffers = </span><span class="p">[</span> <span class="p">]</span>
-      <span class="nv">dataLen = </span><span class="mi">0</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">getPath</span>: <span class="hljs-function"><span class="hljs-params">(pathName, values)</span> -&gt;</span>
+    path = <span class="hljs-property">@paths</span>[pathName]
 
-      <span class="nx">res</span><span class="p">.</span><span class="kc">on</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="nf">(chunk) -&gt;</span>
-        <span class="nx">dataBuffers</span><span class="p">.</span><span class="nx">push</span> <span class="nx">chunk</span>
-        <span class="nx">dataLen</span> <span class="o">+=</span> <span class="nx">chunk</span><span class="p">.</span><span class="nx">length</span>
+    _.each _.extend({ }, <span class="hljs-property">@options</span>, values), <span class="hljs-function"><span class="hljs-params">(value, key)</span> -&gt;</span>
+      path = path.replace <span class="hljs-string">'#{'</span> + key + <span class="hljs-string">'}'</span>, querystring.escape(value)
 
-      <span class="nx">res</span><span class="p">.</span><span class="kc">on</span> <span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="o">=&gt;</span>
-        <span class="nv">dataBuffer = </span><span class="k">new</span> <span class="nx">Buffer</span> <span class="nx">dataLen</span>
+    <span class="hljs-keyword">return</span> path</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>Shortcut for http.get which returns a promise.</p>
 
-        <span class="nv">pos = </span><span class="mi">0</span>
-        <span class="k">for</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">dataBuffers</span>
-          <span class="nx">data</span><span class="p">.</span><span class="nx">copy</span> <span class="nx">dataBuffer</span><span class="p">,</span> <span class="nx">pos</span>
-          <span class="nx">pos</span> <span class="o">+=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">length</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">get</span>: <span class="hljs-function"><span class="hljs-params">(options)</span> -&gt;</span>
+    options = _.extend({ <span class="hljs-attribute">host</span>: <span class="hljs-keyword">this</span>.options.initialHost, <span class="hljs-attribute">port</span>: <span class="hljs-keyword">this</span>.options.port }, options)
+    deferred = Q.defer()
 
-        <span class="k">switch</span> <span class="nx">contentType</span>
-          <span class="k">when</span> <span class="s2">&quot;text/xml&quot;</span><span class="p">,</span> <span class="s2">&quot;application/xml&quot;</span>
-            <span class="nx">xmlParser</span><span class="p">.</span><span class="nx">parseString</span> <span class="nx">dataBuffer</span><span class="p">.</span><span class="nx">toString</span><span class="p">(),</span> <span class="nf">(err, result) -&gt;</span>
-              <span class="nv">err = </span><span class="k">new</span> <span class="nb">Error</span> <span class="s2">&quot;Invalid XML: #{err.message}&quot;</span> <span class="k">if</span> <span class="nx">err</span><span class="o">?</span>
-              <span class="nx">callback</span> <span class="nx">err</span><span class="p">,</span> <span class="nx">result</span>
+    <span class="hljs-keyword">if</span> options.pathName?
+      options.path = <span class="hljs-property">@getPath</span> options.pathName
+      <span class="hljs-keyword">delete</span> options.pathName
 
-          <span class="k">when</span> <span class="s2">&quot;application/zip&quot;</span>
-            <span class="nx">@unzip</span> <span class="nx">dataBuffer</span><span class="p">,</span> <span class="nf">(err, result) -&gt;</span>
-              <span class="nv">err = </span><span class="k">new</span> <span class="nb">Error</span> <span class="s2">&quot;Invalid XML: #{err.message}&quot;</span> <span class="k">if</span> <span class="nx">err</span><span class="o">?</span>
-              <span class="nx">callback</span> <span class="nx">err</span><span class="p">,</span> <span class="nx">result</span>
+    http.get options, <span class="hljs-function"><span class="hljs-params">(res)</span> =&gt;</span>
+      <span class="hljs-keyword">unless</span> <span class="hljs-number">100</span> &lt;= res.statusCode &lt; <span class="hljs-number">300</span>
+        deferred.reject <span class="hljs-keyword">new</span> Error(<span class="hljs-string">"Status: <span class="hljs-subst">#{res.statusCode}</span>"</span>)
+        <span class="hljs-keyword">return</span>
 
-          <span class="k">else</span>
-            <span class="nx">callback</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">dataBuffer</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
+      contentType = res.headers[<span class="hljs-string">'content-type'</span>];
+      <span class="hljs-keyword">if</span> contentType.split(<span class="hljs-string">';'</span>).length
+        contentType = contentType.split(<span class="hljs-string">';'</span>)[<span class="hljs-number">0</span>]
 
-    <span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="nf">(e) -&gt;</span> <span class="nx">callback</span> <span class="nx">e</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>Calls <code>done</code> with <code>err</code> if an error occured, and an array containing a list of languages.</p>
+      dataBuffers = [ ]
+      dataLen = <span class="hljs-number">0</span>
 
+      res.<span class="hljs-literal">on</span> <span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-params">(chunk)</span> -&gt;</span>
+        dataBuffers.push chunk
+        dataLen += chunk.length
+
+      res.<span class="hljs-literal">on</span> <span class="hljs-string">'end'</span>, <span class="hljs-function">=&gt;</span>
+        dataBuffer = <span class="hljs-keyword">new</span> Buffer dataLen
+
+        pos = <span class="hljs-number">0</span>
+        <span class="hljs-keyword">for</span> data, i <span class="hljs-keyword">in</span> dataBuffers
+          data.copy dataBuffer, pos
+          pos += data.length
+
+        <span class="hljs-keyword">switch</span> contentType
+          <span class="hljs-keyword">when</span> <span class="hljs-string">"text/xml"</span>, <span class="hljs-string">"application/xml"</span>
+            xmlParser.parseString dataBuffer.toString(), <span class="hljs-function"><span class="hljs-params">(err, result)</span> -&gt;</span>
+              <span class="hljs-keyword">if</span> err?
+                deferred.reject <span class="hljs-keyword">new</span> Error(<span class="hljs-string">"Invalid XML: <span class="hljs-subst">#{err.message}</span>"</span>)
+              <span class="hljs-keyword">else</span>
+                deferred.resolve result
+
+          <span class="hljs-keyword">when</span> <span class="hljs-string">"application/zip"</span>
+            <span class="hljs-property">@unzip</span> dataBuffer, <span class="hljs-function"><span class="hljs-params">(err, result)</span> -&gt;</span>
+              <span class="hljs-keyword">if</span> err?
+                deferred.reject <span class="hljs-keyword">new</span> Error(<span class="hljs-string">"Invalid XML: <span class="hljs-subst">#{err.message}</span>"</span>)
+              <span class="hljs-keyword">else</span>
+                deferred.resolve result
+
+          <span class="hljs-keyword">else</span>
+            deferred.resolve dataBuffer.toString()
+
+    .<span class="hljs-literal">on</span> <span class="hljs-string">"error"</span>, <span class="hljs-function"><span class="hljs-params">(e)</span> -&gt;</span> deferred.reject <span class="hljs-keyword">new</span> Error(e)
+
+    <span class="hljs-keyword">return</span> deferred.promise</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Returns a promise which is either resolved with an array containing a list of languages or rejected with an error.</p>
 <p>A language is an object containing:</p>
-
 <ul>
 <li><code>id</code> String</li>
 <li><code>name</code> String</li>
 <li><code>abbreviation</code> String</li>
-</ul>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">getLanguages: </span><span class="nf">(done) -&gt;</span>
-    <span class="nx">@get</span> <span class="nv">pathName: </span><span class="s2">&quot;languages&quot;</span><span class="p">,</span> <span class="nf">(err, response) -&gt;</span>
-      <span class="k">if</span> <span class="nx">err</span><span class="o">?</span> <span class="k">then</span> <span class="nx">done</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span> <span class="k">return</span>
-      <span class="nv">languages = </span><span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">Language</span><span class="p">)</span> <span class="k">then</span> <span class="nx">response</span><span class="p">.</span><span class="nx">Language</span> <span class="k">else</span> <span class="p">[</span><span class="nx">response</span><span class="p">.</span><span class="nx">Language</span><span class="p">]</span>
-      <span class="nx">done</span> <span class="kc">undefined</span><span class="p">,</span> <span class="nx">languages</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>Calls <code>done</code> with <code>err</code> if an error occured, and an array containing a list of mirrors.</p>
+</ul>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">getLanguages</span>: <span class="hljs-function">-&gt;</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-property">@get</span>(<span class="hljs-attribute">pathName</span>: <span class="hljs-string">"languages"</span>)
+    .<span class="hljs-keyword">then</span> (response) -&gt;
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> _.isArray(response.Language) <span class="hljs-keyword">then</span> response.Language <span class="hljs-keyword">else</span> [response.Language]</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Returns a promise which is either resolved with an array containing a list of mirrors or rejected with an error.</p>
 <p>A mirror is an object containing:</p>
-
 <ul>
 <li><code>id</code> String</li>
 <li><code>url</code> String</li>
 <li><code>types</code> Array containing at least one of <code>xml</code>, <code>banner</code> and <code>zip</code>.</li>
-</ul>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">getMirrors: </span><span class="nf">(done) -&gt;</span>
-    <span class="nx">@get</span> <span class="nv">pathName: </span><span class="s2">&quot;mirrors&quot;</span><span class="p">,</span> <span class="nf">(err, response) -&gt;</span>
-      <span class="k">if</span> <span class="nx">err</span><span class="o">?</span> <span class="k">then</span> <span class="nx">done</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span> <span class="k">return</span>
+</ul>
 
-      <span class="nv">mirrors = </span><span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">Mirror</span><span class="p">)</span> <span class="k">then</span> <span class="nx">response</span><span class="p">.</span><span class="nx">Mirror</span> <span class="k">else</span> <span class="p">[</span><span class="nx">response</span><span class="p">.</span><span class="nx">Mirror</span><span class="p">]</span>
-      <span class="nv">masks = xml: </span><span class="mi">1</span><span class="p">,</span> <span class="nv">banner: </span><span class="mi">2</span><span class="p">,</span> <span class="nv">zip: </span><span class="mi">4</span>
-      <span class="nv">formattedMirrors = </span><span class="p">[]</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">getMirrors</span>: <span class="hljs-function">-&gt;</span>
+    <span class="hljs-property">@get</span>(<span class="hljs-attribute">pathName</span>: <span class="hljs-string">"mirrors"</span>)
+    .<span class="hljs-keyword">then</span> (response) -&gt;
+      mirrors = <span class="hljs-keyword">if</span> _.isArray(response.Mirror) <span class="hljs-keyword">then</span> response.Mirror <span class="hljs-keyword">else</span> [response.Mirror]
+      masks = <span class="hljs-attribute">xml</span>: <span class="hljs-number">1</span>, <span class="hljs-attribute">banner</span>: <span class="hljs-number">2</span>, <span class="hljs-attribute">zip</span>: <span class="hljs-number">4</span>
+      formattedMirrors = []
 
-      <span class="nx">mirrors</span><span class="p">.</span><span class="nx">forEach</span> <span class="nf">(mirror) -&gt;</span>
-        <span class="nv">formattedMirror =</span>
-          <span class="nv">id: </span><span class="nx">mirror</span><span class="p">.</span><span class="nx">id</span>
-          <span class="nv">url: </span><span class="nx">mirror</span><span class="p">.</span><span class="nx">mirrorpath</span>
-          <span class="nv">types: </span><span class="p">[</span> <span class="p">]</span>
+      mirrors.forEach (mirror) -&gt;
+        formattedMirror =
+          <span class="hljs-attribute">id</span>: mirror.id
+          <span class="hljs-attribute">url</span>: mirror.mirrorpath
+          <span class="hljs-attribute">types</span>: [ ]
 
-        <span class="nx">_</span><span class="p">.</span><span class="nx">each</span> <span class="nx">masks</span><span class="p">,</span> <span class="nf">(mask, type) -&gt;</span>
-          <span class="k">if</span> <span class="p">(</span><span class="nx">mirror</span><span class="p">.</span><span class="nx">typemask</span> <span class="o">&amp;</span> <span class="nx">mask</span><span class="p">)</span> <span class="o">is</span> <span class="nx">mask</span> <span class="k">then</span> <span class="nx">formattedMirror</span><span class="p">.</span><span class="nx">types</span><span class="p">.</span><span class="nx">push</span> <span class="nx">type</span>
+        _.each masks, <span class="hljs-function"><span class="hljs-params">(mask, type)</span> -&gt;</span>
+          <span class="hljs-keyword">if</span> (mirror.typemask &amp; mask) <span class="hljs-keyword">is</span> mask <span class="hljs-keyword">then</span> formattedMirror.types.push type
 
-        <span class="nx">formattedMirrors</span><span class="p">.</span><span class="nx">push</span> <span class="nx">formattedMirror</span>
+        formattedMirrors.push formattedMirror
 
-      <span class="nx">done</span> <span class="kc">undefined</span><span class="p">,</span> <span class="nx">formattedMirrors</span></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>Gets the server timestamp</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">getServerTime: </span><span class="nf">(done) -&gt;</span>
-    <span class="nx">@get</span> <span class="nv">pathName: </span><span class="s2">&quot;serverTime&quot;</span><span class="p">,</span> <span class="nf">(err, response) -&gt;</span>
-      <span class="k">if</span> <span class="nx">err</span><span class="o">?</span> <span class="k">then</span> <span class="nx">done</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span> <span class="k">return</span>
-      <span class="nx">done</span> <span class="kc">undefined</span><span class="p">,</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">Time</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Finds a tv show by its name.</p>
+      <span class="hljs-keyword">return</span> formattedMirrors</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Gets the server timestamp</p>
 
-<p>The callback <code>done</code> gets invoked with <code>err</code> and <code>tvShows</code>.</p>
-
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">getServerTime</span>: <span class="hljs-function">-&gt;</span>
+    <span class="hljs-property">@get</span>(<span class="hljs-attribute">pathName</span>: <span class="hljs-string">"serverTime"</span>)
+    .<span class="hljs-keyword">then</span> (response) -&gt;
+      <span class="hljs-keyword">return</span> parseInt(response.Time, <span class="hljs-number">10</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>Finds a tv show by its name.</p>
+<p>The returned promise gets resolved with a list of tv shows or rejected with an error.</p>
 <p><code>tvShows</code> contains:</p>
-
 <ul>
 <li><code>id</code></li>
 <li><code>language</code></li>
 <li><code>name</code></li>
-</ul>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">findTvShow: </span><span class="nf">(name, done) -&gt;</span>
-    <span class="nx">@get</span> <span class="nv">path: </span><span class="k">this</span><span class="p">.</span><span class="nx">getPath</span><span class="p">(</span><span class="s2">&quot;findTvShow&quot;</span><span class="p">,</span> <span class="nv">name: </span><span class="nx">name</span><span class="p">),</span> <span class="nf">(err, tvShows) -&gt;</span>
-      <span class="k">if</span> <span class="nx">err</span><span class="o">?</span> <span class="k">then</span> <span class="nx">done</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span> <span class="k">return</span>
+</ul>
 
-      <span class="nv">formattedTvShows = </span><span class="p">[</span> <span class="p">]</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">findTvShow</span>: <span class="hljs-function"><span class="hljs-params">(name)</span> -&gt;</span>
+    self = <span class="hljs-keyword">this</span>
 
-      <span class="nx">unless</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isEmpty</span> <span class="nx">tvShows</span>
-        <span class="nv">tvShows = </span><span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isArray</span> <span class="nx">tvShows</span><span class="p">.</span><span class="nx">Series</span> <span class="k">then</span> <span class="nx">tvShows</span><span class="p">.</span><span class="nx">Series</span> <span class="k">else</span> <span class="p">[</span><span class="nx">tvShows</span><span class="p">.</span><span class="nx">Series</span><span class="p">]</span>
-        <span class="nv">keyMapping = IMDB_ID: </span><span class="s1">&#39;imdbId&#39;</span><span class="p">,</span> <span class="nv">zap2it_id: </span><span class="s1">&#39;zap2itId&#39;</span><span class="p">,</span> <span class="nv">banner: </span><span class="s1">&#39;banner&#39;</span><span class="p">,</span> <span class="nv">Overview: </span><span class="s1">&#39;overview&#39;</span>
+    <span class="hljs-property">@get</span>(<span class="hljs-attribute">path</span>: <span class="hljs-keyword">this</span>.getPath(<span class="hljs-string">"findTvShow"</span>, <span class="hljs-attribute">name</span>: name))
+    .<span class="hljs-keyword">then</span> (tvShows) -&gt;
+      formattedTvShows = [ ]
 
-        <span class="nx">tvShows</span><span class="p">.</span><span class="nx">forEach</span> <span class="nf">(tvShow) -&gt;</span>
-          <span class="nv">formattedTvShow =</span>
-            <span class="nv">id: </span><span class="nx">tvShow</span><span class="p">.</span><span class="nx">id</span>
-            <span class="nv">language: </span><span class="nx">tvShow</span><span class="p">.</span><span class="nx">language</span>
-            <span class="nv">name: </span><span class="nx">tvShow</span><span class="p">.</span><span class="nx">SeriesName</span>
+      <span class="hljs-keyword">if</span> tvShows?.Series?
+        tvShows = <span class="hljs-keyword">if</span> _.isArray tvShows.Series <span class="hljs-keyword">then</span> tvShows.Series <span class="hljs-keyword">else</span> [tvShows.Series]
 
-          <span class="nv">formattedTvShow.firstAired = </span><span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nx">tvShow</span><span class="p">.</span><span class="nx">FirstAired</span><span class="p">)</span> <span class="k">if</span> <span class="nx">tvShow</span><span class="p">.</span><span class="nx">FirstAired</span><span class="o">?</span>
+        tvShows.forEach (tvShow) -&gt;
+          formattedTvShows.push self.formatGetTvShow tvShow
 
-          <span class="nx">_</span><span class="p">.</span><span class="nx">each</span> <span class="nx">keyMapping</span><span class="p">,</span> <span class="nf">(trgKey, srcKey) -&gt;</span>
-            <span class="nv">srcValue = </span><span class="nx">tvShow</span><span class="p">[</span><span class="nx">srcKey</span><span class="p">]</span>
-            <span class="nx">formattedTvShow</span><span class="p">[</span><span class="nx">trgKey</span><span class="p">]</span> <span class="o">=</span> <span class="nx">srcValue</span> <span class="k">if</span> <span class="nx">srcValue</span>
+      <span class="hljs-keyword">return</span> formattedTvShows</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Retrieves all information for a specific TV Show.</p>
+<p>The returned promise gets resolved with info or rejected with an error.</p>
+<p><code>info</code> contains following objects:</p>
+<ul>
+<li><code>tvShow</code></li>
+<li><code>episodes</code></li>
+<li><code>actors</code></li>
+<li><code>banners</code></li>
+</ul>
 
-          <span class="nx">formattedTvShows</span><span class="p">.</span><span class="nx">push</span> <span class="nx">formattedTvShow</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">getInfo</span>: <span class="hljs-function"><span class="hljs-params">(tvShowId, language)</span> -&gt;</span>
+    options = { <span class="hljs-attribute">language</span>: <span class="hljs-string">'en'</span>, <span class="hljs-attribute">seriesId</span>: tvShowId }
+    options.language = language <span class="hljs-keyword">if</span> language?
+    self = <span class="hljs-keyword">this</span>
 
-      <span class="nx">done</span> <span class="kc">undefined</span><span class="p">,</span> <span class="nx">formattedTvShows</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>Unzips a zip buffer and returns an object with the filenames as keys and the data as values.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">unzip: </span><span class="nf">(zipBuffer, done) -&gt;</span>
-    <span class="nv">zip = </span><span class="k">new</span> <span class="nx">Zip</span> <span class="nx">zipBuffer</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="s2">&quot;base64&quot;</span><span class="p">),</span> <span class="nv">base64: </span><span class="kc">true</span><span class="p">,</span> <span class="nv">checkCRC32: </span><span class="kc">true</span>
-    <span class="nv">files = </span><span class="p">{</span> <span class="p">}</span>
-    <span class="nx">_</span><span class="p">.</span><span class="nx">each</span> <span class="nx">zip</span><span class="p">.</span><span class="nx">files</span><span class="p">,</span> <span class="nf">(file, index) -&gt;</span>
-      <span class="nx">files</span><span class="p">[</span><span class="nx">file</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">file</span><span class="p">.</span><span class="nx">data</span>
-    <span class="nx">done</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">files</span></pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>Retrieves all information for a specific TV Show.</p>
+    <span class="hljs-property">@get</span>(<span class="hljs-attribute">path</span>: <span class="hljs-keyword">this</span>.getPath(<span class="hljs-string">"getInfo"</span>, options)) 
+    .<span class="hljs-keyword">then</span> (files) -&gt;
+      formattedResult = { }
 
-<p>The callback <code>done</code> gets invoked with <code>err</code> and <code>info</code>.</p>
+      <span class="hljs-keyword">for</span> filename, xml <span class="hljs-keyword">of</span> files
+        xmlParser.parseString xml, <span class="hljs-function"><span class="hljs-params">(err, result)</span> -&gt;</span>
+          <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"Invalid XML: <span class="hljs-subst">#{err.message}</span>"</span> <span class="hljs-keyword">if</span> err?
 
-<p><code>info</code> contains:</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">getInfo: </span><span class="nf">(mirrorUrl, tvShowId, done, language) -&gt;</span>
-    <span class="nv">options = </span><span class="p">{</span> <span class="p">}</span>
+          <span class="hljs-keyword">if</span> result.Actor?
+            formattedActors = []
 
-    <span class="nv">options.language = </span><span class="nx">language</span> <span class="k">if</span> <span class="nx">language</span><span class="o">?</span>
+            actors = <span class="hljs-keyword">if</span> _.isArray result.Actor <span class="hljs-keyword">then</span> result.Actor <span class="hljs-keyword">else</span> [result.Actor]
+            actors.forEach (actor) -&gt;
+              formattedActors.push self.formatActor actor
 
-    <span class="nx">@get</span> <span class="nv">path: </span><span class="k">this</span><span class="p">.</span><span class="nx">getPath</span><span class="p">(</span><span class="s2">&quot;getInfo&quot;</span><span class="p">,</span> <span class="nx">options</span><span class="p">),</span> <span class="nf">(err, files) -&gt;</span>
-      <span class="k">if</span> <span class="nx">err</span><span class="o">?</span> <span class="k">then</span> <span class="nx">done</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span> <span class="k">return</span>
+            formattedResult[<span class="hljs-string">'actors'</span>] = formattedActors
 
-      <span class="k">for</span> <span class="nx">filename</span><span class="p">,</span> <span class="nx">xml</span> <span class="k">of</span> <span class="nx">files</span>
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">filename</span>
+          <span class="hljs-keyword">if</span> result.Banner?
+            formattedBanners = []
 
-      <span class="nx">done</span> <span class="kc">undefined</span><span class="p">,</span> <span class="nx">files</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>Exposing TVDB
-@type {TVDB}</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">module.exports = </span><span class="nx">TVDB</span>
+            banners = <span class="hljs-keyword">if</span> _.isArray result.Banner <span class="hljs-keyword">then</span> result.Banner <span class="hljs-keyword">else</span> [result.Banner]
+            banners.forEach (banner) -&gt;
+              formattedBanners.push self.formatBanner banner
 
-</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
+            formattedResult[<span class="hljs-string">'banners'</span>] = formattedBanners
+
+          <span class="hljs-keyword">if</span> result.Series?
+            formattedResult[<span class="hljs-string">'tvShow'</span>] = self.formatTvShow result.Series
+
+          <span class="hljs-keyword">if</span> result.Episode?
+            formattedEpisodes = []
+
+            episodes = <span class="hljs-keyword">if</span> _.isArray result.Episode <span class="hljs-keyword">then</span> result.Episode <span class="hljs-keyword">else</span> [result.Episode]
+            episodes.forEach (episode) -&gt;
+              formattedEpisodes.push self.formatEpisode episode
+
+            formattedResult[<span class="hljs-string">'episodes'</span>] = formattedEpisodes
+
+      <span class="hljs-keyword">return</span> formattedResult</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>Retrieves basic information for a specific TV Show.</p>
+<p>The returned promise gets resolved with info or rejected with an error.</p>
+<p><code>info</code> contains an object with tv show information.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">getInfoTvShow</span>: <span class="hljs-function"><span class="hljs-params">(tvShowId, language)</span> -&gt;</span>
+    options = { <span class="hljs-attribute">language</span>: <span class="hljs-string">'en'</span>, <span class="hljs-attribute">seriesId</span>: tvShowId }
+    options.language = language <span class="hljs-keyword">if</span> language?
+    self = <span class="hljs-keyword">this</span>
+
+    <span class="hljs-property">@get</span>(<span class="hljs-attribute">path</span>: <span class="hljs-keyword">this</span>.getPath(<span class="hljs-string">"getInfoTvShow"</span>, options))
+    .<span class="hljs-keyword">then</span> (files) -&gt;
+      <span class="hljs-keyword">return</span> self.formatTvShow files.Series</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>Retrieves basic information for a specific TV Show episode.</p>
+<p>The returned promise gets resolved with info or rejected with an error.</p>
+<p><code>info</code> contains an object with tv show episode information.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">getInfoEpisode</span>: <span class="hljs-function"><span class="hljs-params">(episodeId, language)</span> -&gt;</span>
+    options = { <span class="hljs-attribute">language</span>: <span class="hljs-string">'en'</span>, <span class="hljs-attribute">episodesId</span>: episodeId }
+    options.language = language <span class="hljs-keyword">if</span> language?
+    self = <span class="hljs-keyword">this</span>
+
+    <span class="hljs-property">@get</span>(<span class="hljs-attribute">path</span>: <span class="hljs-keyword">this</span>.getPath(<span class="hljs-string">"getInfoEpisode"</span>, options))
+    .<span class="hljs-keyword">then</span> (files) -&gt;
+      <span class="hljs-keyword">return</span> self.formatEpisode files.Episode</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>Unzips a zip buffer and returns an object with the filenames as keys and the data as values.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">unzip</span>: <span class="hljs-function"><span class="hljs-params">(zipBuffer, done)</span> -&gt;</span>
+    zip = <span class="hljs-keyword">new</span> Zip zipBuffer
+    zipEntries = zip.getEntries()
+    files = { }
+    _.each zipEntries, <span class="hljs-function"><span class="hljs-params">(file, index)</span> -&gt;</span>
+      files[file.entryName] = file.getData().toString <span class="hljs-string">'utf8'</span>
+    done <span class="hljs-literal">null</span>, files</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>Retrieves all updates based on parameter. Valid parameters are</p>
+<ul>
+<li><code>day</code></li>
+<li><code>week</code></li>
+<li><code>month</code></li>
+</ul>
+<p>The returned promise gets resolved with updates or rejected with an error.</p>
+<p><code>updates</code> contains following objects:</p>
+<ul>
+<li><code>updateInfo</code></li>
+<li><code>tvShows</code></li>
+<li><code>episodes</code></li>
+<li><code>banners</code></li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">getUpdates</span>: <span class="hljs-function"><span class="hljs-params">(period)</span> -&gt;</span>
+    <span class="hljs-keyword">if</span> !([<span class="hljs-string">'day'</span>, <span class="hljs-string">'week'</span>, <span class="hljs-string">'month'</span>].some (p) -&gt; p == period)
+      deferred = Q.defer()
+
+      deferred.reject <span class="hljs-keyword">new</span> Error <span class="hljs-string">"Invalid period <span class="hljs-subst">#{period}</span>"</span>
+
+      <span class="hljs-keyword">return</span> deferred.promise
+
+    options = { <span class="hljs-attribute">period</span>: period }
+    self = <span class="hljs-keyword">this</span>
+
+    <span class="hljs-property">@get</span>(<span class="hljs-attribute">path</span>: <span class="hljs-keyword">this</span>.getPath(<span class="hljs-string">"getUpdates"</span>, options))
+    .<span class="hljs-keyword">then</span> (files) -&gt;
+      formattedResult = {}
+
+      _.each files, <span class="hljs-function"><span class="hljs-params">(xml)</span> -&gt;</span>
+        xmlParser.parseString xml, <span class="hljs-function"><span class="hljs-params">(err, updates)</span> -&gt;</span>
+          <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"Invalid XML: <span class="hljs-subst">#{err.message}</span>"</span> <span class="hljs-keyword">if</span> err?
+
+          _.each updates, <span class="hljs-function"><span class="hljs-params">(update, key)</span> -&gt;</span>
+            <span class="hljs-keyword">if</span> key == <span class="hljs-string">"$"</span>
+              formattedResult[<span class="hljs-string">'updateInfo'</span>] = update
+
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> key == <span class="hljs-string">"Series"</span>
+              formattedResult[<span class="hljs-string">'tvShows'</span>] = []
+
+              _.each update, <span class="hljs-function"><span class="hljs-params">(tvShow)</span> -&gt;</span>
+                formattedResult[<span class="hljs-string">'tvShows'</span>].push self.formatUpdateTvShow tvShow
+
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> key == <span class="hljs-string">"Episode"</span>
+              formattedResult[<span class="hljs-string">'episodes'</span>] = []
+
+              _.each update, <span class="hljs-function"><span class="hljs-params">(episode)</span> -&gt;</span>
+                formattedResult[<span class="hljs-string">'episodes'</span>].push self.formatUpdateEpisode episode
+
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> key == <span class="hljs-string">"Banner"</span>
+              formattedResult[<span class="hljs-string">'banners'</span>] = []
+
+              _.each update, <span class="hljs-function"><span class="hljs-params">(banner)</span> -&gt;</span>
+                formattedResult[<span class="hljs-string">'banners'</span>].push self.formatUpdateBanner banner
+
+      <span class="hljs-keyword">return</span> formattedResult</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>Formats an <code>object</code> using a <code>keymap</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">format</span>: <span class="hljs-function"><span class="hljs-params">(object, keymap)</span> -&gt;</span>
+    formattedObject = {}
+
+    <span class="hljs-keyword">for</span> oldKey, newKey <span class="hljs-keyword">of</span> keymap
+      srcValue = object[oldKey]
+      formattedObject[newKey] = srcValue <span class="hljs-keyword">if</span> srcValue?
+
+    <span class="hljs-keyword">return</span> formattedObject</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>Wrapper functions around format.</p>
+<p>For the keymap look at <code>keymap.json</code> in the src folder.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">formatActor</span>: <span class="hljs-function"><span class="hljs-params">(actor)</span> -&gt;</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-property">@format</span> actor, keymap.actor
+
+  <span class="hljs-attribute">formatBanner</span>: <span class="hljs-function"><span class="hljs-params">(banner)</span> -&gt;</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-property">@format</span> banner, keymap.banner
+
+  <span class="hljs-attribute">formatEpisode</span>: <span class="hljs-function"><span class="hljs-params">(episode)</span> -&gt;</span>
+    formatted = <span class="hljs-property">@format</span> episode, keymap.episode
+    formatted.firstAired = <span class="hljs-keyword">new</span> Date(formatted.firstAired) <span class="hljs-keyword">if</span> formatted.firstAired?
+
+    <span class="hljs-keyword">return</span> formatted
+
+  <span class="hljs-attribute">formatTvShow</span>: <span class="hljs-function"><span class="hljs-params">(tvShow)</span> -&gt;</span>
+    formatted = <span class="hljs-property">@format</span> tvShow, keymap.series
+    formatted.firstAired = <span class="hljs-keyword">new</span> Date(formatted.firstAired) <span class="hljs-keyword">if</span> formatted.firstAired?
+
+    <span class="hljs-keyword">return</span> formatted
+
+  <span class="hljs-attribute">formatGetTvShow</span>: <span class="hljs-function"><span class="hljs-params">(tvShow)</span> -&gt;</span>
+    formatted = <span class="hljs-property">@format</span> tvShow, keymap.getSeries
+    formatted.firstAired = <span class="hljs-keyword">new</span> Date(formatted.firstAired) <span class="hljs-keyword">if</span> formatted.firstAired?
+
+    <span class="hljs-keyword">return</span> formatted
+
+  <span class="hljs-attribute">formatUpdateBanner</span>: <span class="hljs-function"><span class="hljs-params">(banner)</span> -&gt;</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-property">@format</span> banner, keymap.update.banner
+
+  <span class="hljs-attribute">formatUpdateEpisode</span>: <span class="hljs-function"><span class="hljs-params">(episode)</span> -&gt;</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-property">@format</span> episode, keymap.update.episode
+
+  <span class="hljs-attribute">formatUpdateTvShow</span>: <span class="hljs-function"><span class="hljs-params">(tvShow)</span> -&gt;</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-property">@format</span> tvShow, keymap.update.series</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>Exposing TVDB
+@type {TVDB}</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">module</span>.exports = TVDB</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>Exposing the XML Parser as well</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">module</span>.exports.xmlParser = xmlParser</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

@@ -21,8 +21,9 @@ http = require "http"
 _ = require "underscore"
 querystring = require "querystring"
 fs = require "fs"
-Zip = require 'adm-zip'
-
+Zip = require "adm-zip"
+keymap = require "./keymap.json"
+Q = require "q"
 
 # Class definition
 class TVDB
@@ -52,7 +53,7 @@ class TVDB
   setLanguage: (abbreviation) ->
     @options.language = abbreviation
 
-  # Sets the mirrorUrl option
+  # Sets the mirrorUrl option.
   setMirror: (host, port) ->
     @options.initialHost = host if host?
     @options.port = port if port?
@@ -80,9 +81,10 @@ class TVDB
     return path
 
 
-  # Shortcut for http.get
-  get: (options, callback) ->
+  # Shortcut for http.get which returns a promise.
+  get: (options) ->
     options = _.extend({ host: this.options.initialHost, port: this.options.port }, options)
+    deferred = Q.defer()
 
     if options.pathName?
       options.path = @getPath options.pathName
@@ -90,7 +92,7 @@ class TVDB
 
     http.get options, (res) =>
       unless 100 <= res.statusCode < 300
-        callback new Error("Status: #{res.statusCode}")
+        deferred.reject new Error("Status: #{res.statusCode}")
         return
 
       contentType = res.headers['content-type'];
@@ -115,45 +117,49 @@ class TVDB
         switch contentType
           when "text/xml", "application/xml"
             xmlParser.parseString dataBuffer.toString(), (err, result) ->
-              err = new Error "Invalid XML: #{err.message}" if err?
-              callback err, result
+              if err?
+                deferred.reject new Error("Invalid XML: #{err.message}")
+              else
+                deferred.resolve result
 
           when "application/zip"
             @unzip dataBuffer, (err, result) ->
-              err = new Error "Invalid XML: #{err.message}" if err?
-              callback err, result
+              if err?
+                deferred.reject new Error("Invalid XML: #{err.message}")
+              else
+                deferred.resolve result
 
           else
-            callback null, dataBuffer.toString()
+            deferred.resolve dataBuffer.toString()
 
-    .on "error", (e) -> callback e
+    .on "error", (e) -> deferred.reject new Error(e)
+
+    return deferred.promise
 
 
-  # Calls `done` with `err` if an error occured, and an array containing a list of languages.
+  # Returns a promise which is either resolved with an array containing a list of languages or rejected with an error.
   #
   # A language is an object containing:
   #
   #   - `id` String
   #   - `name` String
   #   - `abbreviation` String
-  getLanguages: (done) ->
-    @get pathName: "languages", (err, response) ->
-      if err? then done(err); return
-      languages = if _.isArray(response.Language) then response.Language else [response.Language]
-      done undefined, languages
+  getLanguages: ->
+    return @get(pathName: "languages")
+    .then (response) ->
+      return if _.isArray(response.Language) then response.Language else [response.Language]
 
 
-  # Calls `done` with `err` if an error occured, and an array containing a list of mirrors.
+  # Returns a promise which is either resolved with an array containing a list of mirrors or rejected with an error.
   #
   # A mirror is an object containing:
   #
   #   - `id` String
   #   - `url` String
   #   - `types` Array containing at least one of `xml`, `banner` and `zip`.
-  getMirrors: (done) ->
-    @get pathName: "mirrors", (err, response) ->
-      if err? then done(err); return
-
+  getMirrors: ->
+    @get(pathName: "mirrors")
+    .then (response) ->
       mirrors = if _.isArray(response.Mirror) then response.Mirror else [response.Mirror]
       masks = xml: 1, banner: 2, zip: 4
       formattedMirrors = []
@@ -169,55 +175,44 @@ class TVDB
 
         formattedMirrors.push formattedMirror
 
-      done undefined, formattedMirrors
+      return formattedMirrors
 
 
   # Gets the server timestamp
-  getServerTime: (done) ->
-    @get pathName: "serverTime", (err, response) ->
-      if err? then done(err); return
-      done undefined, parseInt(response.Time, 10)
+  getServerTime: ->
+    @get(pathName: "serverTime")
+    .then (response) ->
+      return parseInt(response.Time, 10)
 
 
   # Finds a tv show by its name.
   #
-  # The callback `done` gets invoked with `err` and `tvShows`.
+  # The returned promise gets resolved with a list of tv shows or rejected with an error.
   #
   # `tvShows` contains:
   #
   #   - `id`
   #   - `language`
   #   - `name`
-  findTvShow: (name, done) ->
-    @get path: this.getPath("findTvShow", name: name), (err, tvShows) ->
-      return done err if err?
+  findTvShow: (name) ->
+    self = this
 
+    @get(path: this.getPath("findTvShow", name: name))
+    .then (tvShows) ->
       formattedTvShows = [ ]
 
       if tvShows?.Series?
         tvShows = if _.isArray tvShows.Series then tvShows.Series else [tvShows.Series]
-        keyMapping = IMDB_ID: 'imdbId', zap2it_id: 'zap2itId', banner: 'banner', Overview: 'overview'
 
         tvShows.forEach (tvShow) ->
-          formattedTvShow =
-            id: tvShow.id
-            language: tvShow.language
-            name: tvShow.SeriesName
+          formattedTvShows.push self.formatGetTvShow tvShow
 
-          formattedTvShow.firstAired = new Date(tvShow.FirstAired) if tvShow.FirstAired?
-
-          _.each keyMapping, (trgKey, srcKey) ->
-            srcValue = tvShow[srcKey]
-            formattedTvShow[trgKey] = srcValue if srcValue
-
-          formattedTvShows.push formattedTvShow
-
-      done undefined, formattedTvShows
+      return formattedTvShows
 
 
   # Retrieves all information for a specific TV Show.
   #
-  # The callback `done` gets invoked with `err` and `info`.
+  # The returned promise gets resolved with info or rejected with an error.
   #
   # `info` contains following objects:
   #
@@ -225,58 +220,34 @@ class TVDB
   #   - `episodes`
   #   - `actors`
   #   - `banners`
-  getInfo: (tvShowId, done, language) ->
+  getInfo: (tvShowId, language) ->
     options = { language: 'en', seriesId: tvShowId }
     options.language = language if language?
     self = this
 
-    @get path: this.getPath("getInfo", options), (err, files) ->
-      return done err if err?
-
+    @get(path: this.getPath("getInfo", options)) 
+    .then (files) ->
       formattedResult = { }
 
       for filename, xml of files
         xmlParser.parseString xml, (err, result) ->
-          return done new Error "Invalid XML: #{err.message}" if err?
+          return new Error "Invalid XML: #{err.message}" if err?
 
           if result.Actor?
             formattedActors = []
-            keyMapping = Image: 'image', Role: 'role', SortOrder: 'sortOrder'
 
             actors = if _.isArray result.Actor then result.Actor else [result.Actor]
             actors.forEach (actor) ->
-              formattedActor =
-                id: actor.id,
-                name: actor.Name
-
-              _.each keyMapping, (trgKey, srcKey) ->
-                srcValue = actor[srcKey]
-                formattedActor[trgKey] = srcValue if srcValue
-
-              formattedActors.push formattedActor
+              formattedActors.push self.formatActor actor
 
             formattedResult['actors'] = formattedActors
 
           if result.Banner?
             formattedBanners = []
-            keyMapping = Colors: 'colors', ThumbnailPath: 'thumbnailPath', VigettePath: 'vigenettePath', Season: 'season'
 
             banners = if _.isArray result.Banner then result.Banner else [result.Banner]
             banners.forEach (banner) ->
-              formattedBanner =
-                id: banner.id,
-                path: banner.BannerPath,
-                type: banner.BannerType,
-                type2: banner.BannerType2,
-                language: banner.Language,
-                rating: banner.Rating,
-                ratingCount: banner.RatingCount
-
-              _.each keyMapping, (trgKey, srcKey) ->
-                srcValue = banner[srcKey]
-                formattedBanner[trgKey] = srcValue if srcValue
-
-              formattedBanners.push formattedBanner
+              formattedBanners.push self.formatBanner banner
 
             formattedResult['banners'] = formattedBanners
 
@@ -292,39 +263,37 @@ class TVDB
 
             formattedResult['episodes'] = formattedEpisodes
 
-      done undefined, formattedResult
+      return formattedResult
 
 
   # Retrieves basic information for a specific TV Show.
   #
-  # The callback `done`gets invoked with `err` and `info.
+  # The returned promise gets resolved with info or rejected with an error.
   #
   # `info` contains an object with tv show information.
-  getInfoTvShow: (tvShowId, done, language) ->
+  getInfoTvShow: (tvShowId, language) ->
     options = { language: 'en', seriesId: tvShowId }
     options.language = language if language?
     self = this
 
-    @get path: this.getPath("getInfoTvShow", options), (err, files) ->
-      return done err if err?
-
-      done undefined, self.formatTvShow files.Series
+    @get(path: this.getPath("getInfoTvShow", options))
+    .then (files) ->
+      return self.formatTvShow files.Series
 
 
   # Retrieves basic information for a specific TV Show episode.
   #
-  # The callback `done`gets invoked with `err` and `info.
+  # The returned promise gets resolved with info or rejected with an error.
   #
   # `info` contains an object with tv show episode information.
-  getInfoEpisode: (episodeId, done, language) ->
+  getInfoEpisode: (episodeId, language) ->
     options = { language: 'en', episodesId: episodeId }
     options.language = language if language?
     self = this
 
-    @get path: this.getPath("getInfoEpisode", options), (err, files) ->
-      return done err if err?
-
-      done undefined, self.formatEpisode files.Episode
+    @get(path: this.getPath("getInfoEpisode", options))
+    .then (files) ->
+      return self.formatEpisode files.Episode
 
   # Unzips a zip buffer and returns an object with the filenames as keys and the data as values.
   unzip: (zipBuffer, done) ->
@@ -341,7 +310,7 @@ class TVDB
   #   - `week`
   #   - `month`
   #
-  # The callback `done` gets invoked with `err` and `updates`.
+  # The returned promise gets resolved with updates or rejected with an error.
   #
   # `updates` contains following objects:
   #
@@ -349,92 +318,94 @@ class TVDB
   #   - `tvShows`
   #   - `episodes`
   #   - `banners`
-  getUpdates: (period, done) ->
+  getUpdates: (period) ->
     if !(['day', 'week', 'month'].some (p) -> p == period)
-      return done new Error "Invalid period #{period}"
+      deferred = Q.defer()
+
+      deferred.reject new Error "Invalid period #{period}"
+
+      return deferred.promise
 
     options = { period: period }
+    self = this
 
-    @get path: this.getPath("getUpdates", options), (err, files) ->
-      return done err if err?
-
+    @get(path: this.getPath("getUpdates", options))
+    .then (files) ->
       formattedResult = {}
 
       _.each files, (xml) ->
         xmlParser.parseString xml, (err, updates) ->
-          return done new Error "Invalid XML: #{err.message}" if err?
+          return new Error "Invalid XML: #{err.message}" if err?
 
           _.each updates, (update, key) ->
             if key == "$"
-              formattedResult['updateInfo'] = update;
+              formattedResult['updateInfo'] = update
 
             else if key == "Series"
-              formattedResult['tvShows'] = update;
+              formattedResult['tvShows'] = []
+
+              _.each update, (tvShow) ->
+                formattedResult['tvShows'].push self.formatUpdateTvShow tvShow
 
             else if key == "Episode"
-              formattedResult['episodes'] = [];
+              formattedResult['episodes'] = []
 
               _.each update, (episode) ->
-                formattedResult['episodes'].push { id: episode.id, tvShowId: episode.Series, time: episode.time }
+                formattedResult['episodes'].push self.formatUpdateEpisode episode
 
             else if key == "Banner"
-              formattedResult['banners'] = [];
+              formattedResult['banners'] = []
 
               _.each update, (banner) ->
-                bannerInfo = {
-                  tvShowId: banner.Series,
-                  path: banner.path,
-                  time: banner.time,
-                  type: banner.type
-                }
-                bannerInfo.season = banner.SeasonNum if banner.SeasonNum?
-                bannerInfo.format = banner.format if banner.format?
-                bannerInfo.language = banner.language if banner.language?
+                formattedResult['banners'].push self.formatUpdateBanner banner
 
-                formattedResult['banners'].push bannerInfo
+      return formattedResult
 
-      done undefined, formattedResult
+  # Formats an `object` using a `keymap`.
+  format: (object, keymap) ->
+    formattedObject = {}
 
-  formatTvShow: (tvShow) ->
-    keyMapping = IMDB_ID: 'imdbId', zap2it_id: 'zap2itId', banner: 'banner', Overview: 'overview', Airs_DayOfWeek: 'airDay', Airs_Time: 'airTime',
-    Runtime: 'runtime', Status: 'status'
-    formattedTvShow =
-      id: tvShow.id,
-      genre: tvShow.Genre,
-      language: tvShow.Language,
-      name: tvShow.SeriesName
-      poster: tvShow.poster
+    for oldKey, newKey of keymap
+      srcValue = object[oldKey]
+      formattedObject[newKey] = srcValue if srcValue?
 
-    formattedTvShow.firstAired = new Date(tvShow.FirstAired) if tvShow.FirstAired?
+    return formattedObject
 
-    _.each keyMapping, (trgKey, srcKey) ->
-      srcValue = tvShow[srcKey]
-      formattedTvShow[trgKey] = srcValue if srcValue
+  # Wrapper functions around format.
+  # 
+  # For the keymap look at `keymap.json` in the src folder.
+  formatActor: (actor) ->
+    return @format actor, keymap.actor
 
-    return formattedTvShow
-
+  formatBanner: (banner) ->
+    return @format banner, keymap.banner
 
   formatEpisode: (episode) ->
-    keyMapping = Overview: 'overview', Rating: 'rating', RatingCount: 'ratingCount', Writer: 'writer'
+    formatted = @format episode, keymap.episode
+    formatted.firstAired = new Date(formatted.firstAired) if formatted.firstAired?
 
-    formattedEpisode =
-      id: episode.id,
-      name: episode.EpisodeName,
-      number: episode.EpisodeNumber,
-      language: episode.Language,
-      season: episode.SeasonNumber
-      seasonId: episode.seasonid,
-      tvShowId: episode.seriesid,
-      lastUpdated: episode.lastupdated
-      image: episode.filename
+    return formatted
 
-    formattedEpisode.firstAired = new Date(episode.FirstAired) if episode.FirstAired?
+  formatTvShow: (tvShow) ->
+    formatted = @format tvShow, keymap.series
+    formatted.firstAired = new Date(formatted.firstAired) if formatted.firstAired?
 
-    _.each keyMapping, (trgKey, srcKey) ->
-      srcValue = episode[srcKey]
-      formattedEpisode[trgKey] = srcValue if srcValue
+    return formatted
 
-    return formattedEpisode
+  formatGetTvShow: (tvShow) ->
+    formatted = @format tvShow, keymap.getSeries
+    formatted.firstAired = new Date(formatted.firstAired) if formatted.firstAired?
+
+    return formatted
+
+  formatUpdateBanner: (banner) ->
+    return @format banner, keymap.update.banner
+
+  formatUpdateEpisode: (episode) ->
+    return @format episode, keymap.update.episode
+
+  formatUpdateTvShow: (tvShow) ->
+    return @format tvShow, keymap.update.series
 
 # Exposing TVDB
 # @type {TVDB}
