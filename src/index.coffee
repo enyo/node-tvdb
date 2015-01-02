@@ -53,7 +53,7 @@ class TVDB
   setLanguage: (abbreviation) ->
     @options.language = abbreviation
 
-  # Sets the mirrorUrl option
+  # Sets the mirrorUrl option.
   setMirror: (host, port) ->
     @options.initialHost = host if host?
     @options.port = port if port?
@@ -81,7 +81,7 @@ class TVDB
     return path
 
 
-  # Shortcut for http.get
+  # Shortcut for http.get which returns a promise.
   get: (options) ->
     options = _.extend({ host: this.options.initialHost, port: this.options.port }, options)
     deferred = Q.defer()
@@ -137,7 +137,7 @@ class TVDB
     return deferred.promise
 
 
-  # Calls `done` with `err` if an error occured, and an array containing a list of languages.
+  # Returns a promise which is either resolved with an array containing a list of languages or rejected with an error.
   #
   # A language is an object containing:
   #
@@ -150,7 +150,7 @@ class TVDB
       return if _.isArray(response.Language) then response.Language else [response.Language]
 
 
-  # Calls `done` with `err` if an error occured, and an array containing a list of mirrors.
+  # Returns a promise which is either resolved with an array containing a list of mirrors or rejected with an error.
   #
   # A mirror is an object containing:
   #
@@ -187,7 +187,7 @@ class TVDB
 
   # Finds a tv show by its name.
   #
-  # The callback `done` gets invoked with `err` and `tvShows`.
+  # The returned promise gets resolved with a list of tv shows or rejected with an error.
   #
   # `tvShows` contains:
   #
@@ -212,7 +212,7 @@ class TVDB
 
   # Retrieves all information for a specific TV Show.
   #
-  # The callback `done` gets invoked with `err` and `info`.
+  # The returned promise gets resolved with info or rejected with an error.
   #
   # `info` contains following objects:
   #
@@ -268,7 +268,7 @@ class TVDB
 
   # Retrieves basic information for a specific TV Show.
   #
-  # The callback `done`gets invoked with `err` and `info.
+  # The returned promise gets resolved with info or rejected with an error.
   #
   # `info` contains an object with tv show information.
   getInfoTvShow: (tvShowId, language) ->
@@ -283,7 +283,7 @@ class TVDB
 
   # Retrieves basic information for a specific TV Show episode.
   #
-  # The callback `done`gets invoked with `err` and `info.
+  # The returned promise gets resolved with info or rejected with an error.
   #
   # `info` contains an object with tv show episode information.
   getInfoEpisode: (episodeId, language) ->
@@ -310,7 +310,7 @@ class TVDB
   #   - `week`
   #   - `month`
   #
-  # The callback `done` gets invoked with `err` and `updates`.
+  # The returned promise gets resolved with updates or rejected with an error.
   #
   # `updates` contains following objects:
   #
@@ -361,15 +361,19 @@ class TVDB
 
       return formattedResult
 
-  format: (unformattedObject, keymap) ->
+  # Formats an `object` using a `keymap`.
+  format: (object, keymap) ->
     formattedObject = {}
 
     for oldKey, newKey of keymap
-      srcValue = unformattedObject[oldKey]
+      srcValue = object[oldKey]
       formattedObject[newKey] = srcValue if srcValue?
 
     return formattedObject
 
+  # Wrapper functions around format.
+  # 
+  # For the keymap look at `keymap.json` in the src folder.
   formatActor: (actor) ->
     return @format actor, keymap.actor
 
