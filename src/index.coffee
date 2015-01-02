@@ -195,27 +195,17 @@ class TVDB
   #   - `language`
   #   - `name`
   findTvShow: (name) ->
+    self = this
+
     @get(path: this.getPath("findTvShow", name: name))
     .then (tvShows) ->
       formattedTvShows = [ ]
 
       if tvShows?.Series?
         tvShows = if _.isArray tvShows.Series then tvShows.Series else [tvShows.Series]
-        keyMapping = IMDB_ID: 'imdbId', zap2it_id: 'zap2itId', banner: 'banner', Overview: 'overview'
 
         tvShows.forEach (tvShow) ->
-          formattedTvShow =
-            id: tvShow.id
-            language: tvShow.language
-            name: tvShow.SeriesName
-
-          formattedTvShow.firstAired = new Date(tvShow.FirstAired) if tvShow.FirstAired?
-
-          _.each keyMapping, (trgKey, srcKey) ->
-            srcValue = tvShow[srcKey]
-            formattedTvShow[trgKey] = srcValue if srcValue
-
-          formattedTvShows.push formattedTvShow
+          formattedTvShows.push self.formatGetTvShow tvShow
 
       return formattedTvShows
 
@@ -245,42 +235,19 @@ class TVDB
 
           if result.Actor?
             formattedActors = []
-            keyMapping = Image: 'image', Role: 'role', SortOrder: 'sortOrder'
 
             actors = if _.isArray result.Actor then result.Actor else [result.Actor]
             actors.forEach (actor) ->
-              formattedActor =
-                id: actor.id,
-                name: actor.Name
-
-              _.each keyMapping, (trgKey, srcKey) ->
-                srcValue = actor[srcKey]
-                formattedActor[trgKey] = srcValue if srcValue
-
-              formattedActors.push formattedActor
+              formattedActors.push self.formatActor actor
 
             formattedResult['actors'] = formattedActors
 
           if result.Banner?
             formattedBanners = []
-            keyMapping = Colors: 'colors', ThumbnailPath: 'thumbnailPath', VigettePath: 'vigenettePath', Season: 'season'
 
             banners = if _.isArray result.Banner then result.Banner else [result.Banner]
             banners.forEach (banner) ->
-              formattedBanner =
-                id: banner.id,
-                path: banner.BannerPath,
-                type: banner.BannerType,
-                type2: banner.BannerType2,
-                language: banner.Language,
-                rating: banner.Rating,
-                ratingCount: banner.RatingCount
-
-              _.each keyMapping, (trgKey, srcKey) ->
-                srcValue = banner[srcKey]
-                formattedBanner[trgKey] = srcValue if srcValue
-
-              formattedBanners.push formattedBanner
+              formattedBanners.push self.formatBanner banner
 
             formattedResult['banners'] = formattedBanners
 
@@ -360,6 +327,7 @@ class TVDB
       return deferred.promise
 
     options = { period: period }
+    self = this
 
     @get(path: this.getPath("getUpdates", options))
     .then (files) ->
@@ -371,75 +339,69 @@ class TVDB
 
           _.each updates, (update, key) ->
             if key == "$"
-              formattedResult['updateInfo'] = update;
+              formattedResult['updateInfo'] = update
 
             else if key == "Series"
-              formattedResult['tvShows'] = update;
+              formattedResult['tvShows'] = []
+
+              _.each update, (tvShow) ->
+                formattedResult['tvShows'].push self.formatUpdateTvShow tvShow
 
             else if key == "Episode"
-              formattedResult['episodes'] = [];
+              formattedResult['episodes'] = []
 
               _.each update, (episode) ->
-                formattedResult['episodes'].push { id: episode.id, tvShowId: episode.Series, time: episode.time }
+                formattedResult['episodes'].push self.formatUpdateEpisode episode
 
             else if key == "Banner"
-              formattedResult['banners'] = [];
+              formattedResult['banners'] = []
 
               _.each update, (banner) ->
-                bannerInfo = {
-                  tvShowId: banner.Series,
-                  path: banner.path,
-                  time: banner.time,
-                  type: banner.type
-                }
-                bannerInfo.season = banner.SeasonNum if banner.SeasonNum?
-                bannerInfo.format = banner.format if banner.format?
-                bannerInfo.language = banner.language if banner.language?
-
-                formattedResult['banners'].push bannerInfo
+                formattedResult['banners'].push self.formatUpdateBanner banner
 
       return formattedResult
 
-  formatTvShow: (tvShow) ->
-    keyMapping = IMDB_ID: 'imdbId', zap2it_id: 'zap2itId', banner: 'banner', Overview: 'overview', Airs_DayOfWeek: 'airDay', Airs_Time: 'airTime',
-    Runtime: 'runtime', Status: 'status'
-    formattedTvShow =
-      id: tvShow.id,
-      genre: tvShow.Genre,
-      language: tvShow.Language,
-      name: tvShow.SeriesName
-      poster: tvShow.poster
+  format: (unformattedObject, keymap) ->
+    formattedObject = {}
 
-    formattedTvShow.firstAired = new Date(tvShow.FirstAired) if tvShow.FirstAired?
+    for oldKey, newKey of keymap
+      srcValue = unformattedObject[oldKey]
+      formattedObject[newKey] = srcValue if srcValue?
 
-    _.each keyMapping, (trgKey, srcKey) ->
-      srcValue = tvShow[srcKey]
-      formattedTvShow[trgKey] = srcValue if srcValue
+    return formattedObject
 
-    return formattedTvShow
+  formatActor: (actor) ->
+    return @format actor, keymap.actor
 
+  formatBanner: (banner) ->
+    return @format banner, keymap.banner
 
   formatEpisode: (episode) ->
-    keyMapping = Overview: 'overview', Rating: 'rating', RatingCount: 'ratingCount', Writer: 'writer'
+    formatted = @format episode, keymap.episode
+    formatted.firstAired = new Date(formatted.firstAired) if formatted.firstAired?
 
-    formattedEpisode =
-      id: episode.id,
-      name: episode.EpisodeName,
-      number: episode.EpisodeNumber,
-      language: episode.Language,
-      season: episode.SeasonNumber
-      seasonId: episode.seasonid,
-      tvShowId: episode.seriesid,
-      lastUpdated: episode.lastupdated
-      image: episode.filename
+    return formatted
 
-    formattedEpisode.firstAired = new Date(episode.FirstAired) if episode.FirstAired?
+  formatTvShow: (tvShow) ->
+    formatted = @format tvShow, keymap.series
+    formatted.firstAired = new Date(formatted.firstAired) if formatted.firstAired?
 
-    _.each keyMapping, (trgKey, srcKey) ->
-      srcValue = episode[srcKey]
-      formattedEpisode[trgKey] = srcValue if srcValue
+    return formatted
 
-    return formattedEpisode
+  formatGetTvShow: (tvShow) ->
+    formatted = @format tvShow, keymap.getSeries
+    formatted.firstAired = new Date(formatted.firstAired) if formatted.firstAired?
+
+    return formatted
+
+  formatUpdateBanner: (banner) ->
+    return @format banner, keymap.update.banner
+
+  formatUpdateEpisode: (episode) ->
+    return @format episode, keymap.update.episode
+
+  formatUpdateTvShow: (tvShow) ->
+    return @format tvShow, keymap.update.series
 
 # Exposing TVDB
 # @type {TVDB}

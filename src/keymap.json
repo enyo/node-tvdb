@@ -7,6 +7,7 @@
 		"SortOrder": "sortOrder"
 	},
 	"banner": {
+		"id": "id",
 		"BannerPath": "bannerPath",
 		"ThumbnailPath": "thumbnailPath",
 		"VignettePath": "vignettePath",
@@ -46,18 +47,20 @@
 		"airsbefore_episode": "airsBeforeEpisode",
 		"airsbefore_season": "airsBeforeSeason",
 		"filename": "fileName",
+		"flagged": "flagged",
 		"lastupdated": "lastUpdated",
+		"mirrorupdate": "mirrorUpdate",
 		"seasonid": "seasonId",
 		"seriesid": "seriesId",
 		"thumb_added": "thumbAdded",
-		"thumb_height": "thumbHeight"
+		"thumb_height": "thumbHeight",
+		"thumb_width": "thumbWidth"
 	},
 	"series": {
 		"id": "id",
 		"Actors": "actors",
 		"Airs_DayOfWeek": "airsDayOfWeek",
 		"Airs_Time": "airsTime",
-		"AliasNames": "aliasNames",
 		"ContentRating": "contentRating",
 		"FirstAired": "firstAired",
 		"Genre": "genre",
@@ -77,7 +80,45 @@
 		"banner": "banner",
 		"fanart": "fanart",
 		"lastupdated": "lastUpdated",
-		"posters": "posters",
+		"poster": "poster",
 		"zap2it_id": "zap2itId"
+	},
+	"update":
+	{
+
+		"banner":
+		{
+			"Series": "series",
+			"format": "format",
+			"language": "language",
+			"path": "path",
+			"time": "time",
+			"type": "type"
+		},
+		"episode":
+		{
+			"id": "id",
+			"Series": "series",
+			"time": "time"
+		},
+		"series": 
+		{
+			"id": "id",
+			"time": "time"
+		}
+	},
+	"getSeries":
+	{
+		"id": "id",
+		"seriesid": "seriesId",
+		"language": "language",
+		"SeriesName": "seriesName",
+		"AliasNames": "aliasName",
+		"banner": "banner",
+		"Overview": "overview",
+		"FirstAired": "firstAired",
+		"IMDB_ID": "imdbId",
+		"zap2it_id": "zap2itId",
+		"Network": "network"
 	}
 }
