@@ -1,5 +1,10 @@
-# TheTVDB.com Node library Version 0.0.13
+> **We have stopped working on this library.** Please use the great alternative
+> [`edwellbrook/node-tvdb`](https://github.com/edwellbrook/node-tvdb) instead.
 
+* * *
+
+
+# TheTVDB.com Node library Version 0.0.13
 
 ![Build status](https://travis-ci.org/enyo/node-tvdb.png?branch=master) (Master)  
 ![Build status](https://travis-ci.org/enyo/node-tvdb.png) (Development)
