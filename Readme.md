@@ -1,5 +1,5 @@
-> **We have stopped working on this library.** Please use the great alternative
-> [`edwellbrook/node-tvdb`](https://github.com/edwellbrook/node-tvdb) instead.
+**We have stopped working on this library.** Please use the great alternative
+[`edwellbrook/node-tvdb`](https://github.com/edwellbrook/node-tvdb) instead.
 
 * * *
 
