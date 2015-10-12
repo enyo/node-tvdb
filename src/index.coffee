@@ -21,7 +21,7 @@ http = require "http"
 _ = require "underscore"
 querystring = require "querystring"
 fs = require "fs"
-Zip = require 'node-zip'
+Zip = require 'adm-zip'
 
 
 # Class definition
@@ -115,7 +115,7 @@ class TVDB
 
         switch contentType
           when "text/xml", "application/xml"
-            xmlParser.parseString dataBuffer.toString(), (err, result) ->
+            xmlParser.parseString dataBuffer.toString().replace(/<BR>/g,'\n'), (err, result) ->
               err = new Error "Invalid XML: #{err.message}" if err?
               callback err, result
 
@@ -197,7 +197,7 @@ class TVDB
 
       if tvShows?.Series?
         tvShows = if _.isArray tvShows.Series then tvShows.Series else [tvShows.Series]
-        keyMapping = IMDB_ID: 'imdbId', zap2it_id: 'zap2itId', banner: 'banner', Overview: 'overview'
+        keyMapping = IMDB_ID: 'imdbId', zap2it_id: 'zap2itId', banner: 'banner', Network: 'network', Overview: 'overview'
 
         tvShows.forEach (tvShow) ->
           formattedTvShow =
@@ -329,10 +329,11 @@ class TVDB
 
   # Unzips a zip buffer and returns an object with the filenames as keys and the data as values.
   unzip: (zipBuffer, done) ->
-    zip = new Zip zipBuffer.toString("base64"), base64: true, checkCRC32: true
+    zip = new Zip zipBuffer
+    zipEntries = zip.getEntries()
     files = { }
-    _.each zip.files, (file, index) ->
-      files[file.name] = file.data
+    _.each zipEntries, (file, index) ->
+      files[file.entryName] = file.getData().toString 'utf8'
     done null, files
 
 
@@ -400,6 +401,7 @@ class TVDB
     formattedTvShow =
       id: tvShow.id,
       genre: tvShow.Genre,
+      network: tvShow.Network,
       language: tvShow.Language,
       name: tvShow.SeriesName
 
