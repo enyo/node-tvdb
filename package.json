@@ -18,7 +18,7 @@
     "node": ">=0.6.x <0.9"
   },
   "dependencies": {
-    "xml2js": "0.x",
+    "xml2js": "0.2.x",
     "underscore": "1.x",
     "node-zip": "0.x"
   },
